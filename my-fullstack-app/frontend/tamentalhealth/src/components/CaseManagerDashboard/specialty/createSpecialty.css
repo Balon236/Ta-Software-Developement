@@ -1,0 +1,102 @@
+/* Container */
+.create-specialty-container {
+    min-height: 100vh;
+    padding: 24px;
+}
+
+/* Header */
+.specialty-header {
+    display: flex;
+    justify-content: space-between;
+    background-color: #ffffff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    border: 2px solid #1E74FF26;
+    padding: 16px;
+    margin-bottom: 24px;
+    gap: 10px;
+}
+
+.specialty-header-button {
+    padding: 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    width: 100%;
+    background-color: #ffffff;
+    color: #1f2937;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.specialty-header-button.active {
+    background-color: #2563eb;
+    color: #ffffff;
+}
+
+.specialty-header-button:hover {
+    background-color: #2563eb;
+    color: #ffffff;
+}
+
+/* Content */
+.create-specialty-content {
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 32px;
+}
+
+/* Title */
+.create-specialty-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 24px;
+}
+
+/* Form Group */
+.create-specialty-container .form-group {
+    margin-bottom: 24px;
+}
+
+.create-specialty-container .label {
+    display: block;
+    color: #374151;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.create-specialty-container .input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    color: #374151;
+}
+
+.create-specialty-container .input:focus {
+    outline: none;
+    border-color: #2563eb;
+}
+
+/* Save Button */
+.create-specialty-container .save-button {
+    width: 100%;
+    background-color: #2563eb;
+    color: white;
+    padding: 20px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.create-specialty-container .save-button:hover {
+    background-color: #1d4ed8;
+}
+
+/* Text */
+.create-specialty-container .text {
+    color: #6b7280;
+}

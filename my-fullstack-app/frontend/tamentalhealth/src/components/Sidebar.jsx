@@ -13,27 +13,45 @@ const Sidebar = () => {
 
         {/* Menu Items */}
         <ul className="space-y-3 text-gray-700 text-sm max-h-[25rem] overflow-y-auto">
-          <Link to="/dashboard/country" className="flex items-center justify-center gap-2 relative py-2 w-full bg-blue-100 after:content-[''] after:absolute after:top-0 after:left-0 after:w-2.5 after:h-full after:bg-blue-600">
+          <Link
+            to="/dashboard"
+            className="flex items-center justify-center gap-2 relative py-2 w-full bg-blue-100 after:content-[''] after:absolute after:top-0 after:left-0 after:w-2.5 after:h-full after:bg-blue-600"
+          >
             <i className="bx bx-grid-alt text-blue-600 text-[17px]"></i>
             <h3 className="text-blue-600 text-[17px]">Create a Country</h3>
           </Link>
-          <Link to="/dashboard/region" className="flex items-center justify-center gap-2 relative py-2 w-full ">
+          <Link
+            to="/dashboard/region"
+            className="flex items-center justify-center gap-2 relative py-2 w-full "
+          >
             <i className="bx bx-file text-gray-500 text-[17px]"></i>
             <h3 className="text-gray-500 text-[17px]">Create region</h3>
           </Link>
-          <Link to="/dashboard/category" className="flex items-center justify-center gap-2 relative py-2 w-full ">
+          <Link
+            to="/dashboard/category"
+            className="flex items-center justify-center gap-2 relative py-2 w-full "
+          >
             <i className="bx bx-user text-gray-500 text-[17px]"></i>
             <h3 className="text-gray-500 text-[17px]">Create Category</h3>
           </Link>
-          <Link to="/dashboard/manager" className="flex items-center justify-center gap-2 relative py-2 w-full ">
+          <Link
+            to="/dashboard/manager"
+            className="flex items-center justify-center gap-2 relative py-2 w-full "
+          >
             <i className="bx bx-group text-gray-500 text-[17px]"></i>
             <h3 className="text-gray-500 text-[17px]">Create Manager</h3>
           </Link>
-          <Link to="/dashboard/casemanager" className="flex items-center justify-center gap-2 relative py-2 w-full ">
+          <Link
+            to="/dashboard/casemanager"
+            className="flex items-center justify-center gap-2 relative py-2 w-full "
+          >
             <i className="bx bx-cog text-gray-500 text-[17px]"></i>
             <h3 className="text-gray-500 text-[17px]">Create Case Manager</h3>
           </Link>
-          <Link to="/dashboard/school" className="flex items-center justify-center gap-2 relative py-2 w-full ">
+          <Link
+            to="/dashboard/school"
+            className="flex items-center justify-center gap-2 relative py-2 w-full "
+          >
             <i className="bx bx-cog text-gray-500 text-[17px]"></i>
             <h3 className="text-gray-500 text-[17px]">Create School</h3>
           </Link>
@@ -79,12 +97,10 @@ const Sidebar = () => {
           </Link>
         </ul>
         <div className="text-red-500 hover:text-red-700 cursor-pointer flex items-center justify-center relative top-12 gap-2">
-        <i className='bx bx-log-out'></i>
-        <span>Log Out</span>
+          <i className="bx bx-log-out"></i>
+          <span>Log Out</span>
+        </div>
       </div>
-      </div>
-
-      
     </div>
   );
 };

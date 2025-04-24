@@ -1,0 +1,357 @@
+/* messageView.css */
+.message-container {
+    background: white;
+    border-radius: 10px;
+    border: 2px solid #1E74FF26;
+    padding: 20px;
+    margin: auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.message-title {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.message-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.entries-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #777;
+}
+
+.entries-select {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 14px;
+    width: 60px;
+    text-align: center;
+}
+
+.search-bar {
+    flex-grow: 1;
+    max-width: 500px;
+    margin: 0 20px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>');
+    background-repeat: no-repeat;
+    background-position: 12px center;
+    padding-left: 40px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.delete-button,
+.filters-button,
+.export-button {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    background-color: white;
+    gap: 5px;
+}
+
+.delete-button {
+    color: #e74c3c;
+    border-color: #e74c3c;
+}
+
+.delete-icon,
+.filters-icon,
+.export-icon {
+    font-size: 16px;
+}
+
+.message-table-container {
+    overflow-x: auto;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+}
+
+.message-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.message-table th {
+    background-color: #f8f9fa;
+    color: #3498db;
+    text-align: left;
+    padding: 15px 20px;
+    font-weight: bold;
+    border-bottom: 1px solid #eee;
+}
+
+.message-table td {
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.checkbox-column {
+    width: 40px;
+}
+
+.checkbox-column input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.action-column {
+    width: 120px;
+}
+
+.action-icons {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+}
+
+.edit-button,
+.view-button,
+.delete-icon-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    background-color: white;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.edit-button {
+    color: #3498db;
+    border-color: #3498db;
+}
+
+.view-button {
+    color: #3498db;
+    border-color: #3498db;
+}
+
+.delete-icon-button {
+    color: #e74c3c;
+    border-color: #e74c3c;
+}
+
+.pagination-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 20px;
+    gap: 5px;
+}
+
+.pagination-button {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    background-color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.pagination-number {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ddd;
+    background-color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.pagination-number.active {
+    background-color: #2196f3;
+    color: white;
+    border-color: #2196f3;
+}
+
+.pagination-ellipsis {
+    width: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .message-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+
+    .search-bar {
+        margin: 10px 0;
+        max-width: 100%;
+    }
+
+    .action-buttons {
+        justify-content: space-between;
+    }
+}
+
+
+
+
+
+
+
+/* STYLING FOR CREATE MESSAGE AND SEND */
+
+/* Container */
+.create-message-container {
+    min-height: 100vh;
+}
+
+/* Header */
+.message-header {
+    display: flex;
+    justify-content: space-between;
+    background-color: #ffffff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    border: 2px solid #1E74FF26;
+    padding: 16px;
+    margin-bottom: 24px;
+    gap: 10px;
+}
+
+.message-header-button {
+    padding: 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    width: 100%;
+    background-color: #ffffff;
+    color: #1f2937;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.message-header-button.active {
+    background-color: #2563eb;
+    color: #ffffff;
+}
+
+.message-header-button:hover {
+    background-color: #2563eb;
+    color: #ffffff;
+}
+
+/* Content */
+.create-message-content {
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 32px;
+}
+
+/* Title */
+.create-message-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 24px;
+}
+
+/* Form Group */
+.create-message-container .form-group {
+    margin-bottom: 24px;
+}
+
+.create-message-container .label {
+    display: block;
+    color: #374151;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.create-message-container .input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    color: #374151;
+}
+
+.create-message-container .form-group select,
+.create-message-container .form-group textarea {
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+.create-message-container select:focus,
+.create-message-container textarea:focus {
+    border-color: #3498db;
+    outline: none;
+}
+
+/* Textarea */
+.create-message-container .form-group textarea {
+    width: 96%;
+    min-height: 80px;
+    resize: vertical;
+}
+
+.create-message-container .input:focus {
+    outline: none;
+    border-color: #2563eb;
+}
+
+/* Save Button */
+.create-message-container .save-button {
+    width: 100%;
+    background-color: #2563eb;
+    color: white;
+    padding: 20px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.create-message-container .save-button:hover {
+    background-color: #1d4ed8;
+}
+
+/* Text */
+.create-message-container .text {
+    color: #6b7280;
+}

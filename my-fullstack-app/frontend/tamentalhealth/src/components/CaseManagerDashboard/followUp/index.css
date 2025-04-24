@@ -1,0 +1,214 @@
+.follow-up-header {
+    display: flex;
+    justify-content: space-between;
+    background-color: #ffffff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    border: 2px solid #1E74FF26;
+    padding: 16px;
+    margin-bottom: 24px;
+    gap: 10px;
+}
+
+.creat-case-header-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: #000;
+    background-color: #fff;
+    transition: background-color 0.3s;
+}
+
+.creat-case-header-btn.active,
+.creat-case-header-btn:hover {
+    background-color: #2979ff;
+    color: #fff;
+}
+
+
+.follow-up-header button {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: #000;
+    background-color: #fff;
+    transition: background-color 0.3s;
+}
+
+.list-header-title th {
+    color: #007bff;
+    font-weight: 600;
+}
+
+.follow-up-header button.active {
+    background-color: #007bff;
+    color: white;
+}
+
+.follow-up-container {
+    padding: 20px;
+    background: white;
+    border: 2px solid #1E74FF26;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.follow-up-title {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.follow-up-controls {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.follow-up-controls input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.follow-up-controls button {
+    margin-left: 10px;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.follow-up-controls .delete {
+    background-color: #ff4d4f;
+    color: white;
+}
+
+.follow-up-controls .filter {
+    background-color: #f0f0f0;
+}
+
+.follow-up-controls .export {
+    background-color: #f0f0f0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th,
+table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.fullName-column {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+
+    .avater-text {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .follow-up-avater {
+        width: 40px;
+        height: 40px;
+        border-radius: 5px;
+    }
+}
+
+.follow-up-link,
+.follow-up-code {
+    color: #3498db;
+}
+
+.follow-up-progress-bar {
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.follow-up-progress-bar .follow-up-progress {
+    background-color: #007bff;
+    color: white;
+    padding: 2px 5px;
+    font-size: 12px;
+}
+
+.code {
+    color: #007bff;
+}
+
+.action-button {
+    border: none;
+    margin-right: 5px;
+    background: none;
+    cursor: pointer;
+}
+
+.follow-up-controls .search-bar {
+    flex-grow: 1;
+    max-width: 500px;
+    margin: 0 20px;
+}
+
+.follow-up-controls .search-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>');
+    background-repeat: no-repeat;
+    background-position: 12px center;
+    padding-left: 40px;
+}
+
+.pagination {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.pagination button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    border: none;
+    background: #f0f0f0;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.pagination button.active {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .follow-up-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+
+    .search-bar {
+        margin: 10px 0;
+        max-width: 100%;
+    }
+
+    .action-buttons {
+        justify-content: space-between;
+    }
+}
