@@ -27,7 +27,7 @@ const data = [
 const WeightChart = ({ selectedYear, setSelectedYear }) => {
   return (
     <div className="w-full bg-white rounded-lg">
-      <div className="flex justify-between items-center mb-5 md:flex-row flex-col md:items-center items-start md:gap-0 gap-2.5">
+      <div className="flex justify-between  mb-5 md:flex-row flex-col md:items-center items-start md:gap-0 gap-2.5">
         <h2 className="text-lg font-semibold text-gray-800 m-0">
           General Weigh/Time of Students
         </h2>

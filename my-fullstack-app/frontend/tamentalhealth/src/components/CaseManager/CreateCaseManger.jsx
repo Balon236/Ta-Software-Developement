@@ -6,7 +6,7 @@ import Camlogo from "../../assets/cameroon.png";
 const CreateCaseManger = () => {
   const [showPassword, setShowPassword] = useState(false);
   return (
-    <div className="relative w-full">
+    <div className="relative w-full ">
       <div className="flex items-center justify-between">
         <div className="flex flex-col gap-1">
           <h2 className="text-blue-600 text-2xl font-medium">Case Manager</h2>

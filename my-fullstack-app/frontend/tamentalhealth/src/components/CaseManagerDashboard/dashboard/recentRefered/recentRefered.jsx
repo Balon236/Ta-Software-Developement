@@ -24,7 +24,7 @@ const data = [
 
 const RecentReferred = () => {
   return (
-    <div className="referred-container">
+    <div className="referred-container border-[#1E74FF26]">
       <h2 className="title">RECENT REFERED</h2>
       <div className="table">
         <div className="table-header">

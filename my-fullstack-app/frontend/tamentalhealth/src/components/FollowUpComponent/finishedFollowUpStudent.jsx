@@ -177,12 +177,11 @@ function FinishedFollowUpStudent() {
     paginationItems.push(
       <button
         key="prev"
-        className="px-3 py-2 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50"
+        className="flex items-center justify-center w-10 h-10 border border-gray-300 bg-white rounded-md hover:bg-gray-100 disabled:opacity-50"
         onClick={handlePrevious}
+        disabled={currentPage === 1}
       >
-        <span>
-          <GrLinkPrevious />
-        </span>
+        <GrLinkPrevious />
       </button>
     );
 
@@ -190,11 +189,11 @@ function FinishedFollowUpStudent() {
       paginationItems.push(
         <button
           key={i}
-          className={`px-3 py-2 mx-1 rounded-md ${
+          className={`flex items-center justify-center w-9 h-9 border ${
             currentPage === i
-              ? "bg-primary text-white"
-              : "border border-gray-200 text-gray-600 hover:bg-gray-50"
-          }`}
+              ? "bg-blue-500 text-white border-blue-500"
+              : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+          } rounded-md`}
           onClick={() => setCurrentPage(i)}
         >
           {i}
@@ -205,12 +204,11 @@ function FinishedFollowUpStudent() {
     paginationItems.push(
       <button
         key="next"
-        className="px-3 py-2 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50"
+        className="flex items-center justify-center w-10 h-10 border border-gray-300 bg-white rounded-md hover:bg-gray-100 disabled:opacity-50"
         onClick={handleNext}
+        disabled={currentPage === totalPages}
       >
-        <span>
-          <GrLinkNext />
-        </span>
+        <GrLinkNext />
       </button>
     );
 
@@ -219,7 +217,7 @@ function FinishedFollowUpStudent() {
 
   return (
     <>
-      <div className="w-full bg-white p-4 md:p-6 rounded-lg shadow-sm">
+      <div className="w-full bg-white p-4 md:p-6 rounded-lg border-2 border-[#1E74FF26]  shadow-sm">
         <h2 className="text-xl md:text-2xl font-semibold text-primary mb-4">
           Students who have completed their follow-up process
         </h2>
@@ -275,7 +273,7 @@ function FinishedFollowUpStudent() {
               Filters
             </button>
             <button
-              className="px-3 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors flex items-center gap-2"
+              className="px-3 py-2 bg-blue-100 text-blue-500 rounded-md hover:bg-primary/90 transition-colors flex items-center gap-2"
               onClick={handleExport}
             >
               <span>

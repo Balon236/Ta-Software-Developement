@@ -1,19 +1,20 @@
 import React from "react";
-import { FaRegBell, FaChevronDown } from "react-icons/fa";
+import { FaChevronDown, FaRegBell } from "react-icons/fa";
 import userAvater from "../../assets/profile.jpg";
-import OnboardingHeader from "../../components/CaseManagerDashboard/onboardingClients/onboardingHeader";
-const OnboardingClient = () => {
+import ViewConsultant from "../../components/CaseManagerDashboard/viewConsultance/viewConsultant";
+
+const Consultants = () => {
   return (
-    <div className="main-content p-4 w-full sm:p-5 md:p-8 overflow-x-hidden">
-      <div className="header-sec">
+    <div className="w-full p-4 md:p-6 lg:p-8 bg-background overflow-x-auto">
+      <div className="mb-6">
         {/* Header */}
         <header className="flex justify-between items-center mt-8 md:mt-0 mb-4 md:mb-10">
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-[#1e74ff] m-0">
-              On-Boarded Clients
+              Consultants
             </h1>
             <p className="mt-1 text-[#1e74ff] text-base">
-              View All On-boarding clients add more here
+              View All Consultants
             </p>
           </div>
           <div className="flex items-center gap-5">
@@ -35,13 +36,13 @@ const OnboardingClient = () => {
           </div>
         </header>
       </div>
-      <div className="w-full overflow-x-hidden">
-        <div className="main-container w-full">
-          <OnboardingHeader />
+      <div className="flex flex-col lg:flex-row gap-5 overflow-y-auto max-h-[80vh]">
+        <div className="w-full bg-white rounded-lg shadow-sm">
+          <ViewConsultant />
         </div>
       </div>
     </div>
   );
 };
 
-export default OnboardingClient;
+export default Consultants;

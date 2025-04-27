@@ -1,13 +1,23 @@
 import React, { useState } from "react";
 import { RiDeleteBinLine } from "react-icons/ri";
-import { FaFileExport, FaFilter, FaRegEye } from "react-icons/fa";
+import { FaFileExport, FaFilter, FaRegEye, FaSearch } from "react-icons/fa";
 import { GrEdit, GrLinkNext, GrLinkPrevious } from "react-icons/gr";
+import { FiLoader } from "react-icons/fi";
 import profie from "../../../assets/profile.jpg";
-import "./index.css";
+
 function FollowMechanism() {
   const [entries, setEntries] = useState(7);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editFormData, setEditFormData] = useState({
+    studentName: "",
+    code: "",
+    class: "",
+    mechanism: "",
+  });
+  const [selectedItem, setSelectedItem] = useState(null);
   const [data, setData] = useState([
     {
       id: 1,
@@ -65,65 +75,50 @@ function FollowMechanism() {
       class: "Form 5",
       mechanism: "here is the link",
     },
-    {
-      id: 8,
-      avater: profie,
-      studentName: "Laurencia Ikome Nalowa",
-      code: "#90784",
-      class: "Form 5",
-      mechanism: "here is the link",
-    },
-    {
-      id: 9,
-      avater: profie,
-      studentName: "Laurencia Ikome Nalowa",
-      code: "#90784",
-      class: "Upper Sixth",
-      mechanism: "here is the link",
-    },
-    {
-      id: 10,
-      avater: profie,
-      studentName: "Laurencia Ikome Nalowa",
-      code: "#90784",
-      class: "Form 4",
-      mechanism: "here is the link",
-    },
-    {
-      id: 11,
-      avater: profie,
-      studentName: "Dev Nquizi",
-      code: "#90784",
-      class: "Form 4",
-      mechanism: "here is the link",
-    },
-    {
-      id: 12,
-      avater: profie,
-      studentName: "Dev Nquizi",
-      code: "#90784",
-      class: "Form 4",
-      mechanism: "here is the link",
-    },
-    {
-      id: 13,
-      avater: profie,
-      studentName: "Dev Nquizi",
-      code: "#90784",
-      class: "Upper Sixth",
-      mechanism: "here is the link",
-    },
-    {
-      id: 14,
-      avater: profie,
-      studentName: "Dev Nquizi",
-      code: "#90784",
-      class: "Lower Sixth",
-      mechanism: "here is the link",
-    },
   ]);
 
   const [selectedIds, setSelectedIds] = useState([]);
+
+  // Handle edit button click
+  const handleEditClick = (item) => {
+    setSelectedItem(item);
+    setEditFormData({
+      studentName: item.studentName,
+      code: item.code,
+      class: item.class,
+      mechanism: item.mechanism,
+    });
+    setShowEditModal(true);
+  };
+
+  // Handle form input changes
+  const handleEditFormChange = (e) => {
+    const { name, value } = e.target;
+    setEditFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Save edited item
+  const handleSaveEdit = async (e) => {
+    e.preventDefault();
+    setIsEditing(true);
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setData((prevData) =>
+        prevData.map((item) =>
+          item.id === selectedItem.id ? { ...item, ...editFormData } : item
+        )
+      );
+      setShowEditModal(false);
+    } catch (error) {
+      console.error("Error saving changes:", error);
+    } finally {
+      setIsEditing(false);
+    }
+  };
 
   // Filtered data
   const filteredData = data.filter(
@@ -156,7 +151,7 @@ function FollowMechanism() {
   const handleExport = () => {
     const csvContent =
       "data:text/csv;charset=utf-8," +
-      ["studentName,Code,Class,Mecha"]
+      ["studentName,Code,Class,Mechanism"]
         .concat(
           filteredData.map(
             (item) =>
@@ -187,12 +182,11 @@ function FollowMechanism() {
     paginationItems.push(
       <button
         key="prev"
-        className="pagination-button previous"
+        className="flex items-center justify-center w-9 h-9 border border-gray-300 rounded bg-white hover:bg-gray-50 disabled:opacity-50"
         onClick={handlePrevious}
+        disabled={currentPage === 1}
       >
-        <span>
-          <GrLinkPrevious />
-        </span>
+        <GrLinkPrevious />
       </button>
     );
 
@@ -200,7 +194,11 @@ function FollowMechanism() {
       paginationItems.push(
         <button
           key={i}
-          className={`pagination-number ${currentPage === i ? "active" : ""}`}
+          className={`w-9 h-9 flex items-center justify-center border rounded ${
+            currentPage === i
+              ? "bg-blue-500 text-white border-blue-500"
+              : "bg-white border-gray-300 hover:bg-gray-50"
+          }`}
           onClick={() => setCurrentPage(i)}
         >
           {i}
@@ -211,12 +209,11 @@ function FollowMechanism() {
     paginationItems.push(
       <button
         key="next"
-        className="pagination-button next"
+        className="flex items-center justify-center w-9 h-9 border border-gray-300 rounded bg-white hover:bg-gray-50 disabled:opacity-50"
         onClick={handleNext}
+        disabled={currentPage === totalPages}
       >
-        <span>
-          <GrLinkNext />
-        </span>
+        <GrLinkNext />
       </button>
     );
 
@@ -224,18 +221,115 @@ function FollowMechanism() {
   };
 
   return (
-    <div className="follow-up-container">
-      <h2 className="follow-up-title">Follow Up Mechanism</h2>
-      <div className="follow-up-controls">
-        <div className="entries-control">
+    <div className="bg-white rounded-lg p-5 mx-auto shadow-sm border-2 border-[#1E74FF26]">
+      <h1 className="text-2xl text-gray-800 mb-5 font-medium">
+        Follow Up Mechanism
+      </h1>
+
+      {/* Edit Modal */}
+      {showEditModal && (
+        <div className="fixed inset-0 bg-black/50 bg-opacity-50 flex justify-center items-center z-[1000]">
+          <div className="bg-white p-6 rounded-lg max-w-md w-full">
+            <h3 className="text-lg font-medium mb-4">Edit Follow Mechanism</h3>
+
+            <form onSubmit={handleSaveEdit}>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Student Name
+                  </label>
+                  <input
+                    type="text"
+                    name="studentName"
+                    value={editFormData.studentName}
+                    onChange={handleEditFormChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Code
+                  </label>
+                  <input
+                    type="text"
+                    name="code"
+                    value={editFormData.code}
+                    onChange={handleEditFormChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Class
+                  </label>
+                  <input
+                    type="text"
+                    name="class"
+                    value={editFormData.class}
+                    onChange={handleEditFormChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Mechanism Link
+                  </label>
+                  <input
+                    type="text"
+                    name="mechanism"
+                    value={editFormData.mechanism}
+                    onChange={handleEditFormChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 mt-6">
+                <button
+                  type="button"
+                  className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  onClick={() => setShowEditModal(false)}
+                  disabled={isEditing}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  disabled={isEditing}
+                >
+                  {isEditing ? (
+                    <>
+                      <FiLoader className="animate-spin inline mr-2" />
+                      Saving...
+                    </>
+                  ) : (
+                    "Save Changes"
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      <div className="flex flex-col md:flex-row justify-between items-center mb-5 gap-4">
+        <div className="flex items-center gap-2 text-gray-500">
           <span>Show</span>
           <select
             value={entries}
             onChange={(e) => {
               setEntries(parseInt(e.target.value));
-              setCurrentPage(1); // Reset to first page
+              setCurrentPage(1);
             }}
-            className="entries-select"
+            className="border border-gray-300 rounded px-2.5 py-1.5 text-sm w-16 text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="7">07</option>
             <option value="10">10</option>
@@ -245,114 +339,151 @@ function FollowMechanism() {
           <span>Entries</span>
         </div>
 
-        <div className="search-bar">
+        <div className="w-full md:w-auto md:flex-grow md:max-w-md relative">
+          <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+            <FaSearch />
+          </span>
           <input
             type="text"
             placeholder="Search ..."
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
-              setCurrentPage(1); // Reset to first page when searching
+              setCurrentPage(1);
             }}
-            className="search-input"
+            className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
-        <div className="action-buttons">
-          <button className="delete-button" onClick={handleDelete}>
-            <span className="delete-icon">
-              <RiDeleteBinLine />
-            </span>
+        <div className="flex gap-2.5 flex-wrap justify-center">
+          <button
+            className={`flex items-center px-3 py-2 rounded-md border ${
+              selectedIds.length > 0
+                ? "border-red-500 text-red-500 hover:bg-red-50"
+                : "border-gray-300 text-gray-400 cursor-not-allowed"
+            } gap-1.5`}
+            onClick={handleDelete}
+            disabled={selectedIds.length === 0}
+          >
+            <RiDeleteBinLine />
             Delete
           </button>
           <button
-            className="filters-button"
+            className="flex items-center px-3 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50 gap-1.5"
             onClick={() => alert("Filter button clicked!")}
           >
-            <span className="filters-icon">
-              <FaFilter />
-            </span>
+            <FaFilter />
             Filters
           </button>
-          <button className="export-button" onClick={handleExport}>
-            <span className="export-icon">
-              <FaFileExport />
-            </span>
+          <button
+            className="flex items-center px-3 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50 gap-1.5"
+            onClick={handleExport}
+          >
+            <FaFileExport />
             Export
           </button>
         </div>
       </div>
-
-      <table>
-        <thead>
-          <tr className="list-header-title">
-            <th></th>
-            <th>STUDENT NAME & CODE</th>
-            <th>CLASS</th>
-            <th>MECHANISM</th>
-            <th>ACTION</th>
-          </tr>
-        </thead>
-        <tbody>
-          {paginatedData.map((item) => (
-            <tr key={item.id}>
-              <td className="checkbox-column">
-                <input
-                  type="checkbox"
-                  checked={selectedIds.includes(item.id)}
-                  onChange={() => handleSelect(item.id)}
-                />
-              </td>
-
-              <td className="fullName-column">
-                <img src={item.avater} alt="" className="follow-up-avater" />
-                <p className="avater-text">
-                  <span>{item.studentName}</span>
-                  <span className="follow-up-code">{item.code}</span>
-                </p>
-              </td>
-
-              <td className="school-name-column">{item.class}</td>
-
-              <td className="referLink-column">
-                <a href={item.mechanism} className="sevierity-link">
-                  Link
-                </a>
-              </td>
-
-              <td className="action-column">
-                <div className="action-icons">
-                  <button className="edit-button">
-                    <span className="edit-icon">
-                      <GrEdit />
-                    </span>
-                  </button>
-                  <button className="view-button">
-                    <span className="view-icon">
-                      <FaRegEye />
-                    </span>
-                  </button>
-                  <button
-                    className="delete-icon-button"
-                    onClick={() => {
-                      setData(data.filter((d) => d.id !== item.id));
-                      setSelectedIds(
-                        selectedIds.filter((id) => id !== item.id)
-                      );
-                    }}
-                  >
-                    <span className="delete-action-icon">
-                      <RiDeleteBinLine />
-                    </span>
-                  </button>
-                </div>
-              </td>
+      {/* Table Section */}
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="text-left border-b">
+              <th className="p-2 sm:p-3"></th>
+              <th className=" p-2 sm:p-3 text-blue-600 font-semibold text-sm sm:text-base">
+                STUDENT NAME & CODE
+              </th>
+              <th className="p-2 sm:p-3 text-blue-600 font-semibold text-sm sm:text-base hidden sm:table-cell">
+                CLASS
+              </th>
+              <th className="p-2 sm:p-3 text-blue-600 font-semibold text-sm sm:text-base hidden sm:table-cell">
+                MECHANISM
+              </th>
+              <th className="p-2 sm:p-3 text-blue-600 font-semibold text-sm sm:text-base">
+                ACTION
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {paginatedData.map((item) => (
+              <tr key={item.id} className="border-b hover:bg-gray-50">
+                <td className="p-2 sm:p-3">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.includes(item.id)}
+                    onChange={() => handleSelect(item.id)}
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                </td>
 
-      <div className="pagination-container">{generatePagination()}</div>
+                <td className="p-2 sm:p-3">
+                  <div className="flex items-center gap-2">
+                    <img
+                      src={item.avater}
+                      alt=""
+                      className="w-8 h-8 sm:w-10 sm:h-10 rounded"
+                    />
+                    <div>
+                      <p className="font-medium text-sm sm:text-base">
+                        {item.studentName}
+                      </p>
+                      <p className="text-blue-500 text-xs sm:text-sm">
+                        {item.code}
+                      </p>
+                    </div>
+                  </div>
+                </td>
+
+                <td className="p-2 sm:p-3 text-sm hidden sm:table-cell">
+                  {item.class}
+                </td>
+
+                <td className="p-2 sm:p-3">
+                  <a
+                    href={item.mechanism}
+                    className="text-blue-500 hover:underline text-sm sm:text-base hidden sm:table-cell"
+                  >
+                    Link
+                  </a>
+                </td>
+                <td className="w-[100px] sm:w-[120px]">
+                  <div className="flex gap-2 justify-center">
+                    <button
+                      className="w-8 h-8 flex items-center justify-center border border-blue-500 text-blue-500 rounded-md hover:bg-blue-50 disabled:opacity-50"
+                      onClick={() => handleEditClick(item)}
+                      disabled={isEditing}
+                    >
+                      {isEditing && item.id === selectedItem?.id ? (
+                        <FiLoader className="animate-spin" />
+                      ) : (
+                        <GrEdit />
+                      )}
+                    </button>
+                    <button className="w-8 h-8 flex items-center justify-center border border-blue-500 text-blue-500 rounded-md hover:bg-blue-50">
+                      <FaRegEye />
+                    </button>
+                    <button
+                      className="w-8 h-8 flex items-center justify-center border border-red-500 text-red-500 rounded-md hover:bg-red-50"
+                      onClick={() => {
+                        setData(data.filter((d) => d.id !== item.id));
+                        setSelectedIds(
+                          selectedIds.filter((id) => id !== item.id)
+                        );
+                      }}
+                    >
+                      <RiDeleteBinLine />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="flex justify-end items-center mt-5 gap-1.5">
+        {generatePagination()}
+      </div>
     </div>
   );
 }

@@ -4,7 +4,7 @@ import "./index.css";
 
 const OnboardingClientDetails = ({ client, onClose }) => {
   return (
-    <div className="modal">
+    <div className="modal border-[#1E74FF26]">
       <div className="modal-header">
         <h2>ON-BOARDING CLIENT DETAILS</h2>
         <button className="close-btn" onClick={onClose}>

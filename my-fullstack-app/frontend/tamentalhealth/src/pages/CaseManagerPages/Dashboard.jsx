@@ -6,23 +6,27 @@ import WeightChart from "../../components/CaseManagerDashboard/charts/weightChar
 import BodyMassChart from "../../components/CaseManagerDashboard/charts/bodyMassChart";
 import { FaRegBell, FaChevronDown } from "react-icons/fa";
 import userAvater from "../../assets/profile.jpg";
-import logoImage from "../../assets/logo.png"; // Make sure you have a logo image
-import "./Dashboard.css";
+import logoImage from "../../assets/onboard.png";
+import attendance from "../../assets/attendance.png";
+import referred from "../../assets/referred.png";
 
 const CaseManagerDashboard = () => {
-  const [loading, setLoading] = useState(false);
   const [selectedYear, setSelectedYear] = useState("This Year");
 
   // Stats data
   const statsData = [
-    { title: "On-Boarded Clients", value: 50 },
-    { title: "Total Case Managers", value: 23 },
-    { title: "Referred Clients", value: 23 },
-    { title: "Overall Attendance", value: "23%" },
-    { title: "Total Class", value: 23 },
-    { title: "Total Specialties", value: 23 },
-    { title: "Total Consultants", value: 23 },
-    { title: "Total Consulted Clients", value: 23 },
+    { title: "Total Class", value: 23, logo: attendance },
+    { title: "Total Specialties", value: 23, logo: logoImage },
+    { title: "Total Consultants", value: 23, logo: logoImage },
+    { title: "Total Consulted Clients", value: 23, logo: logoImage },
+  ];
+
+  // Stats data
+  const statsData2 = [
+    { title: "On-Boarded Clients", value: 50, logo: logoImage },
+    { title: "Total Case Managers", value: 23, logo: referred },
+    { title: "Referred Clients", value: 23, logo: referred },
+    { title: "Overall Attendance", value: "23%", logo: attendance },
   ];
 
   return (
@@ -30,7 +34,7 @@ const CaseManagerDashboard = () => {
       {/* Main Content */}
       <div className="flex-1 p-5 bg-[#f7f9fc] overflow-y-auto">
         {/* Header */}
-        <header className="flex justify-between items-center mb-7">
+        <header className="flex justify-between items-center mt-8 md:mt-0 mb-4 md:mb-10">
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-[#1e74ff] m-0">
               Dashboard
@@ -59,7 +63,7 @@ const CaseManagerDashboard = () => {
         </header>
 
         {/* Content area */}
-        <div className="flex flex-col lg:flex-row gap-5">
+        <div className="flex flex-col lg:flex-row gap-5 overflow-y-auto max-h-[90vh]">
           {/* Main column */}
           <div className="flex-3 flex flex-col gap-5">
             {/* School Info Card */}
@@ -84,11 +88,15 @@ const CaseManagerDashboard = () => {
             </div>
 
             {/* Stats grid - first row */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              <StatCard title="Total Class" value="23" />
-              <StatCard title="Total Specialties" value="23" />
-              <StatCard title="Total Consultants" value="23" />
-              <StatCard title="Total Consulted Clients" value="23" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3 md:gap-8">
+              {statsData.map((stat, index) => (
+                <StatCard
+                  key={index}
+                  title={stat.title}
+                  value={stat.value}
+                  logo={stat.logo}
+                />
+              ))}
             </div>
 
             {/* Tables Section */}
@@ -113,18 +121,22 @@ const CaseManagerDashboard = () => {
           {/* Side column */}
           <div className="flex-1 flex flex-col gap-5">
             {/* Stats cards */}
-            <StatCard title="On-Boarded Clients" value="50" />
-            <StatCard title="Total Case Managers" value="23" />
-            <StatCard title="Referred Clients" value="23" />
-            <StatCard title="Overall Attendance" value="23%" />
+            {statsData2.map((stat, index) => (
+              <StatCard
+                key={index}
+                title={stat.title}
+                value={stat.value}
+                logo={stat.logo}
+              />
+            ))}
 
             {/* Top Consultants */}
-            <div className="bg-[#e6f0ff] rounded-lg overflow-hidden shadow-sm">
+            <div className="bg-[#e6f0ff] rounded-lg p-2 shadow-sm">
               <TopConsultants />
             </div>
 
             {/* Body Mass Chart */}
-            <div className="bg-[#f2f2f2] rounded-lg p-5 shadow-sm">
+            <div className="bg-[#f2f2f2] rounded-lg p-4 shadow-sm">
               <BodyMassChart />
             </div>
           </div>
@@ -135,9 +147,9 @@ const CaseManagerDashboard = () => {
 };
 
 // Stat Card component
-const StatCard = ({ title, value }) => {
+const StatCard = ({ title, value, logo }) => {
   return (
-    <div className="bg-white rounded-lg p-5 flex justify-between items-center shadow-sm">
+    <div className="bg-white rounded-lg p-5 flex justify-between  items-center shadow-sm">
       <div>
         <h3 className="text-sm md:text-base text-gray-500 font-medium m-0 mb-2.5">
           {title}
@@ -147,8 +159,14 @@ const StatCard = ({ title, value }) => {
         </p>
       </div>
       <div className="flex items-center justify-center">
-        <div className="w-10 h-10 rounded-full bg-[#1e74ff]/10 relative">
-          <div className="absolute w-5 h-5 rounded-full bg-[#1e74ff] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
+        <div className="w-10 h-10   relative">
+          <div className="absolute w-8 h-8   top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <img
+              src={logo}
+              alt={`${title} icon`}
+              className="w-full h-full object-cover"
+            />
+          </div>
         </div>
       </div>
     </div>

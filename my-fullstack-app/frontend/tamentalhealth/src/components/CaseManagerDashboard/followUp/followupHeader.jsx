@@ -25,7 +25,7 @@ function FollowUpHeader() {
   return (
     <div>
       <>
-        <div className="flex justify-between bg-white shadow-md rounded-2xl border-2 border-blue-100/20 p-4 mb-6 gap-2.5">
+        <div className="flex justify-between bg-white shadow-md rounded-2xl border-2 border-[#1E74FF26] p-4 mb-6 gap-2.5">
           <button
             className={`flex-1 p-3 rounded-lg border-none cursor-pointer text-base transition-colors ${
               activePage === "FollowUp"

@@ -1,12 +1,26 @@
 import React, { useState } from "react";
 import { RiDeleteBinLine } from "react-icons/ri";
-import { FaFileExport, FaFilter, FaRegEye } from "react-icons/fa";
+import { FaFileExport, FaFilter, FaRegEye, FaSearch } from "react-icons/fa";
 import { GrEdit, GrLinkNext, GrLinkPrevious } from "react-icons/gr";
+import { FiLoader } from "react-icons/fi";
 
 const MessageView = () => {
+  // State management
   const [entries, setEntries] = useState(7);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editInProgressId, setEditInProgressId] = useState(null);
+  const [editFormData, setEditFormData] = useState({
+    messageId: "",
+    manager: "",
+    messageContent: "",
+    sentAt: "",
+  });
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedIds, setSelectedIds] = useState([]);
+
+  // Sample data
   const [data, setData] = useState([
     {
       id: 1,
@@ -115,14 +129,57 @@ const MessageView = () => {
     },
   ]);
 
-  const [selectedIds, setSelectedIds] = useState([]);
+  // Handle edit button click
+  const handleEditClick = (item) => {
+    setSelectedItem(item);
+    setEditFormData({
+      messageId: item.messageId,
+      manager: item.manager,
+      messageContent: item.messageContent,
+      sentAt: item.sentAt,
+    });
+    setShowEditModal(true);
+  };
 
-  // Filtered data
+  // Handle form input changes
+  const handleEditFormChange = (e) => {
+    const { name, value } = e.target;
+    setEditFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Save edited item
+  const handleSaveEdit = async (e) => {
+    e.preventDefault();
+    setEditInProgressId(selectedItem.id);
+
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Update item data
+      setData((prevData) =>
+        prevData.map((item) =>
+          item.id === selectedItem.id ? { ...item, ...editFormData } : item
+        )
+      );
+
+      setShowEditModal(false);
+    } catch (error) {
+      console.error("Error saving changes:", error);
+    } finally {
+      setEditInProgressId(null);
+    }
+  };
+
+  // Filter data based on search query
   const filteredData = data.filter(
     (item) =>
       item.messageId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.messageContent.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.manager.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.messageContent.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.sentAt.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -133,38 +190,42 @@ const MessageView = () => {
     currentPage * entries
   );
 
+  // Handle row selection
   const handleSelect = (id) => {
     setSelectedIds((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
   };
 
+  // Handle delete
   const handleDelete = () => {
     const newData = data.filter((item) => !selectedIds.includes(item.id));
     setData(newData);
     setSelectedIds([]);
   };
 
+  // Handle export to CSV
   const handleExport = () => {
     const csvContent =
       "data:text/csv;charset=utf-8," +
-      ["messageId,Manager,Message,Sent At"]
+      ["Message ID,Manager,Message Content,Sent At"]
         .concat(
           filteredData.map(
             (item) =>
-              `${item.messageId},${item.manager},${item.messageContent},${item.sentAt},`
+              `${item.messageId},${item.manager},"${item.messageContent}",${item.sentAt}`
           )
         )
         .join("\n");
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "message_data.csv");
+    link.setAttribute("download", "messages_data.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
+  // Pagination controls
   const handlePrevious = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
@@ -179,12 +240,11 @@ const MessageView = () => {
     paginationItems.push(
       <button
         key="prev"
-        className="flex items-center justify-center w-10 h-10 border border-gray-300 bg-white rounded-md hover:bg-gray-100"
+        className="flex items-center justify-center w-10 h-10 border border-gray-300 bg-white rounded-md hover:bg-gray-100 disabled:opacity-50"
         onClick={handlePrevious}
+        disabled={currentPage === 1}
       >
-        <span>
-          <GrLinkPrevious />
-        </span>
+        <GrLinkPrevious />
       </button>
     );
 
@@ -192,11 +252,11 @@ const MessageView = () => {
       paginationItems.push(
         <button
           key={i}
-          className={`flex items-center justify-center w-9 h-9 border rounded-md ${
+          className={`flex items-center justify-center w-9 h-9 border ${
             currentPage === i
               ? "bg-blue-500 text-white border-blue-500"
               : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
-          }`}
+          } rounded-md`}
           onClick={() => setCurrentPage(i)}
         >
           {i}
@@ -207,12 +267,11 @@ const MessageView = () => {
     paginationItems.push(
       <button
         key="next"
-        className="flex items-center justify-center w-10 h-10 border border-gray-300 bg-white rounded-md hover:bg-gray-100"
+        className="flex items-center justify-center w-10 h-10 border border-gray-300 bg-white rounded-md hover:bg-gray-100 disabled:opacity-50"
         onClick={handleNext}
+        disabled={currentPage === totalPages}
       >
-        <span>
-          <GrLinkNext />
-        </span>
+        <GrLinkNext />
       </button>
     );
 
@@ -220,16 +279,114 @@ const MessageView = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg border-2 border-blue-100/20 p-5 mx-auto shadow-sm">
+    <div className="bg-white rounded-lg border-2 border-[#1E74FF26]  p-5 mx-auto shadow-sm">
       <h2 className="text-2xl text-gray-800 mb-5 font-medium">ALL Messages</h2>
 
-      <div className="flex justify-between items-center mb-5 flex-wrap md:flex-nowrap">
+      {/* Edit Modal */}
+      {showEditModal && (
+        <div className="fixed inset-0 bg-black/50 bg-opacity-50 flex justify-center items-center z-[1000]">
+          <div className="bg-white p-6 rounded-lg max-w-md w-full">
+            <h3 className="text-lg font-medium mb-4">Edit Message</h3>
+
+            <form onSubmit={handleSaveEdit}>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Message ID
+                  </label>
+                  <input
+                    type="text"
+                    name="messageId"
+                    value={editFormData.messageId}
+                    onChange={handleEditFormChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Manager
+                  </label>
+                  <input
+                    type="text"
+                    name="manager"
+                    value={editFormData.manager}
+                    onChange={handleEditFormChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Message Content
+                  </label>
+                  <textarea
+                    name="messageContent"
+                    value={editFormData.messageContent}
+                    onChange={handleEditFormChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    required
+                    rows="3"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Sent At
+                  </label>
+                  <input
+                    type="text"
+                    name="sentAt"
+                    value={editFormData.sentAt}
+                    onChange={handleEditFormChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 mt-6">
+                <button
+                  type="button"
+                  className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  onClick={() => setShowEditModal(false)}
+                  disabled={editInProgressId !== null}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  disabled={editInProgressId !== null}
+                >
+                  {editInProgressId ? (
+                    <>
+                      <FiLoader className="animate-spin inline mr-2" />
+                      Saving...
+                    </>
+                  ) : (
+                    "Save Changes"
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Controls */}
+      <div className="flex justify-between items-center mb-5 flex-wrap md:flex-nowrap gap-4">
         <div className="flex items-center gap-2 text-gray-600">
           <span>Show</span>
           <select
-            className="border border-gray-300 rounded-md py-1.5 px-2.5 text-sm text-center w-16"
+            className="border border-gray-300 rounded-md py-1.5 px-2.5 text-sm text-center w-16 focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={entries}
-            onChange={(e) => setEntries(Number(e.target.value))}
+            onChange={(e) => {
+              setEntries(Number(e.target.value));
+              setCurrentPage(1);
+            }}
           >
             <option value={7}>7</option>
             <option value={10}>10</option>
@@ -240,20 +397,23 @@ const MessageView = () => {
         </div>
 
         <div className="flex-grow max-w-md mx-0 my-5 md:my-0 md:mx-5">
-          <input
-            type="text"
-            className="w-full py-2.5 px-3 border border-gray-300 rounded-md text-sm bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2216%22 height=%2216%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23999%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><circle cx=%2211%22 cy=%2211%22 r=%228%22/><path d=%22M21 21l-4.35-4.35%22/></svg>')] bg-no-repeat bg-[length:16px_16px] bg-[12px_center] pl-10"
-            placeholder="Search..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+          <div className="relative">
+            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              className="w-full py-2.5 px-3 pl-10 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
         </div>
 
         <div className="flex gap-2.5">
           <button
             onClick={handleDelete}
             disabled={selectedIds.length === 0}
-            className={`flex items-center py-2 px-3 rounded-md text-sm cursor-pointer border ${
+            className={`flex items-center py-2 px-3 rounded-md text-sm border ${
               selectedIds.length > 0
                 ? "text-red-600 border-red-600 hover:bg-red-50"
                 : "text-gray-400 border-gray-300 cursor-not-allowed"
@@ -262,13 +422,13 @@ const MessageView = () => {
             <RiDeleteBinLine className="mr-1.5 text-base" />
             Delete
           </button>
-          <button className="flex items-center py-2 px-3 rounded-md text-sm cursor-pointer border border-gray-300 bg-white hover:bg-gray-50">
+          <button className="flex items-center py-2 px-3 rounded-md text-sm border border-gray-300 bg-white hover:bg-gray-50">
             <FaFilter className="mr-1.5 text-base" />
             Filters
           </button>
           <button
             onClick={handleExport}
-            className="flex items-center py-2 px-3 rounded-md text-sm cursor-pointer border border-gray-300 bg-white hover:bg-gray-50"
+            className="flex items-center py-2 px-3 rounded-md text-sm border border-gray-300 bg-white hover:bg-gray-50"
           >
             <FaFileExport className="mr-1.5 text-base" />
             Export
@@ -276,11 +436,12 @@ const MessageView = () => {
         </div>
       </div>
 
+      {/* Table */}
       <div className="overflow-x-auto rounded-md shadow-sm">
-        <table className="w-full border-collapse border-spacing-0">
+        <table className="w-full border-collapse">
           <thead>
-            <tr>
-              <th className="bg-gray-50 text-blue-500 text-left py-4 px-5 font-bold border-b border-gray-200">
+            <tr className="bg-gray-50">
+              <th className="text-left py-4 px-5 font-bold border-b border-gray-200">
                 <input
                   type="checkbox"
                   className="w-4.5 h-4.5 cursor-pointer"
@@ -297,26 +458,26 @@ const MessageView = () => {
                   }
                 />
               </th>
-              <th className="bg-gray-50 text-blue-500 text-left py-4 px-5 font-bold border-b border-gray-200">
+              <th className="text-blue-500 text-left py-4 px-5 font-bold border-b border-gray-200">
                 Message ID
               </th>
-              <th className="bg-gray-50 text-blue-500 text-left py-4 px-5 font-bold border-b border-gray-200">
+              <th className="text-blue-500 text-left py-4 px-5 font-bold border-b border-gray-200">
                 Manager
               </th>
-              <th className="bg-gray-50 text-blue-500 text-left py-4 px-5 font-bold border-b border-gray-200">
+              <th className="text-blue-500 text-left py-4 px-5 font-bold border-b border-gray-200">
                 Message Content
               </th>
-              <th className="bg-gray-50 text-blue-500 text-left py-4 px-5 font-bold border-b border-gray-200">
+              <th className="text-blue-500 text-left py-4 px-5 font-bold border-b border-gray-200">
                 Sent At
               </th>
-              <th className="bg-gray-50 text-blue-500 text-left py-4 px-5 font-bold border-b border-gray-200">
+              <th className="text-blue-500 text-left py-4 px-5 font-bold border-b border-gray-200">
                 Action
               </th>
             </tr>
           </thead>
           <tbody>
             {paginatedData.map((item) => (
-              <tr key={item.id}>
+              <tr key={item.id} className="hover:bg-gray-50">
                 <td className="py-4 px-5 border-b border-gray-200">
                   <input
                     type="checkbox"
@@ -339,13 +500,29 @@ const MessageView = () => {
                 </td>
                 <td className="py-4 px-5 border-b border-gray-200">
                   <div className="flex gap-1.5 justify-center">
-                    <button className="flex items-center justify-center w-8 h-8 rounded-md border border-blue-500 bg-white text-blue-500 hover:bg-blue-50">
-                      <GrEdit />
+                    <button
+                      className="flex items-center justify-center w-8 h-8 rounded-md border border-blue-500 bg-white text-blue-500 hover:bg-blue-50 disabled:opacity-50"
+                      onClick={() => handleEditClick(item)}
+                      disabled={editInProgressId !== null}
+                    >
+                      {editInProgressId === item.id ? (
+                        <FiLoader className="animate-spin" />
+                      ) : (
+                        <GrEdit />
+                      )}
                     </button>
                     <button className="flex items-center justify-center w-8 h-8 rounded-md border border-blue-500 bg-white text-blue-500 hover:bg-blue-50">
                       <FaRegEye />
                     </button>
-                    <button className="flex items-center justify-center w-8 h-8 rounded-md border border-red-500 bg-white text-red-500 hover:bg-red-50">
+                    <button
+                      className="flex items-center justify-center w-8 h-8 rounded-md border border-red-500 bg-white text-red-500 hover:bg-red-50"
+                      onClick={() => {
+                        setData(data.filter((d) => d.id !== item.id));
+                        setSelectedIds(
+                          selectedIds.filter((id) => id !== item.id)
+                        );
+                      }}
+                    >
                       <RiDeleteBinLine />
                     </button>
                   </div>
@@ -356,6 +533,7 @@ const MessageView = () => {
         </table>
       </div>
 
+      {/* Pagination */}
       <div className="flex justify-end items-center mt-5 gap-1.5">
         {generatePagination()}
       </div>

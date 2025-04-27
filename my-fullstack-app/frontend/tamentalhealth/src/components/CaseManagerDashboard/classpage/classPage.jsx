@@ -2,11 +2,21 @@ import React, { useState } from "react";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { FaFileExport, FaFilter, FaRegEye, FaSearch } from "react-icons/fa";
 import { GrEdit, GrLinkNext, GrLinkPrevious } from "react-icons/gr";
+import { FiLoader } from "react-icons/fi";
 
 const ClassView = () => {
   const [entries, setEntries] = useState(7);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editFormData, setEditFormData] = useState({
+    country: "",
+    schoolName: "",
+    class: "",
+    manager: "",
+  });
+  const [selectedClient, setSelectedClient] = useState(null);
   const [data, setData] = useState([
     {
       id: 1,
@@ -82,6 +92,51 @@ const ClassView = () => {
 
   const [selectedIds, setSelectedIds] = useState([]);
 
+  // Handle edit button click
+  const handleEditClick = (client) => {
+    setSelectedClient(client);
+    setEditFormData({
+      country: client.country,
+      schoolName: client.schoolName,
+      class: client.class,
+      manager: client.manager,
+    });
+    setShowEditModal(true);
+  };
+
+  // Handle form input changes
+  const handleEditFormChange = (e) => {
+    const { name, value } = e.target;
+    setEditFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Save edited client
+  const handleSaveEdit = async (e) => {
+    e.preventDefault();
+    setIsEditing(true);
+
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Update client data
+      setData((prevData) =>
+        prevData.map((item) =>
+          item.id === selectedClient.id ? { ...item, ...editFormData } : item
+        )
+      );
+
+      setShowEditModal(false);
+    } catch (error) {
+      console.error("Error saving changes:", error);
+    } finally {
+      setIsEditing(false);
+    }
+  };
+
   // Filtered data
   const filteredData = data.filter(
     (item) =>
@@ -144,12 +199,11 @@ const ClassView = () => {
     paginationItems.push(
       <button
         key="prev"
-        className="flex items-center gap-1 px-3 py-2 border border-gray-300 rounded-md bg-white hover:bg-gray-50"
+        className="flex items-center gap-1 px-3 py-2 border border-gray-300 rounded-md bg-white hover:bg-gray-50 disabled:opacity-50"
         onClick={handlePrevious}
+        disabled={currentPage === 1}
       >
-        <span>
-          <GrLinkPrevious />
-        </span>
+        <GrLinkPrevious />
       </button>
     );
 
@@ -168,15 +222,15 @@ const ClassView = () => {
         </button>
       );
     }
+
     paginationItems.push(
       <button
         key="next"
-        className="flex items-center gap-1 px-3 py-2 border border-gray-300 rounded-md bg-white hover:bg-gray-50"
+        className="flex items-center gap-1 px-3 py-2 border border-gray-300 rounded-md bg-white hover:bg-gray-50 disabled:opacity-50"
         onClick={handleNext}
+        disabled={currentPage === totalPages}
       >
-        <span>
-          <GrLinkNext />
-        </span>
+        <GrLinkNext />
       </button>
     );
 
@@ -187,6 +241,100 @@ const ClassView = () => {
     <div className="bg-white rounded-lg p-5 mx-auto shadow-sm border-2 border-[#1E74FF26]">
       <h1 className="text-2xl text-gray-800 mb-5 font-medium">Class</h1>
 
+      {/* Edit Modal */}
+      {showEditModal && (
+        <div className="fixed inset-0 bg-black/50 bg-opacity-50 flex justify-center items-center z-[1000]">
+          <div className="bg-white p-6 rounded-lg max-w-md w-full">
+            <h3 className="text-lg font-medium mb-4">Edit Class Details</h3>
+
+            <form onSubmit={handleSaveEdit}>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Country
+                  </label>
+                  <input
+                    type="text"
+                    name="country"
+                    value={editFormData.country}
+                    onChange={handleEditFormChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    School Name
+                  </label>
+                  <input
+                    type="text"
+                    name="schoolName"
+                    value={editFormData.schoolName}
+                    onChange={handleEditFormChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Class
+                  </label>
+                  <input
+                    type="text"
+                    name="class"
+                    value={editFormData.class}
+                    onChange={handleEditFormChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Manager
+                  </label>
+                  <input
+                    type="text"
+                    name="manager"
+                    value={editFormData.manager}
+                    onChange={handleEditFormChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 mt-6">
+                <button
+                  type="button"
+                  className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  onClick={() => setShowEditModal(false)}
+                  disabled={isEditing}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  disabled={isEditing}
+                >
+                  {isEditing ? (
+                    <>
+                      <FiLoader className="animate-spin inline mr-2" />
+                      Saving...
+                    </>
+                  ) : (
+                    "Save Changes"
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       <div className="flex flex-col md:flex-row justify-between items-center mb-5 gap-4">
         <div className="flex items-center gap-2 text-gray-500">
           <span>Show</span>
@@ -194,7 +342,7 @@ const ClassView = () => {
             value={entries}
             onChange={(e) => {
               setEntries(parseInt(e.target.value));
-              setCurrentPage(1); // Reset to first page
+              setCurrentPage(1);
             }}
             className="border border-gray-300 rounded px-2.5 py-1.5 text-sm w-16 text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
@@ -216,7 +364,7 @@ const ClassView = () => {
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
-              setCurrentPage(1); // Reset to first page when searching
+              setCurrentPage(1);
             }}
             className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
@@ -227,27 +375,21 @@ const ClassView = () => {
             className="flex items-center px-3 py-2 rounded-md border border-red-500 text-red-500 hover:bg-red-50 gap-1.5"
             onClick={handleDelete}
           >
-            <span className="text-base">
-              <RiDeleteBinLine />
-            </span>
+            <RiDeleteBinLine />
             Delete
           </button>
           <button
             className="flex items-center px-3 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50 gap-1.5"
             onClick={() => alert("Filter button clicked!")}
           >
-            <span className="text-base">
-              <FaFilter />
-            </span>
+            <FaFilter />
             Filters
           </button>
           <button
             className="flex items-center px-3 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50 gap-1.5"
             onClick={handleExport}
           >
-            <span className="text-base">
-              <FaFileExport />
-            </span>
+            <FaFileExport />
             Export
           </button>
         </div>
@@ -305,8 +447,16 @@ const ClassView = () => {
                 <td className="p-4">{item.manager}</td>
                 <td className="p-4">
                   <div className="flex gap-2 justify-center">
-                    <button className="w-8 h-8 flex items-center justify-center border border-blue-500 text-blue-500 rounded-md hover:bg-blue-50">
-                      <GrEdit />
+                    <button
+                      className="w-8 h-8 flex items-center justify-center border border-blue-500 text-blue-500 rounded-md hover:bg-blue-50 disabled:opacity-50"
+                      onClick={() => handleEditClick(item)}
+                      disabled={isEditing}
+                    >
+                      {isEditing && item.id === selectedClient?.id ? (
+                        <FiLoader className="animate-spin" />
+                      ) : (
+                        <GrEdit />
+                      )}
                     </button>
                     <button className="w-8 h-8 flex items-center justify-center border border-blue-500 text-blue-500 rounded-md hover:bg-blue-50">
                       <FaRegEye />

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { RiDeleteBinLine } from "react-icons/ri";
-import { FaFileExport, FaFilter } from "react-icons/fa";
+import { FaFileExport, FaFilter, FaSearch } from "react-icons/fa";
 import { GrLinkNext, GrLinkPrevious } from "react-icons/gr";
 function TaskReminder() {
   const [entries, setEntries] = useState(7);
@@ -40,23 +40,20 @@ function TaskReminder() {
     {
       id: 6,
       completedDate: "12/04/2025  11:20 AM",
-      reminderType: "Form 5",
       reminderType: "Scheduled Task",
       priorityLevel: 90,
     },
     {
       id: 7,
       completedDate: "12/04/2025  11:20 AM",
-      reminderType: "Form 5",
       reminderType: "Meeting Reminder",
       priorityLevel: 10,
     },
     {
       id: 8,
       completedDate: "12/04/2025  11:20 AM",
-      reminderType: "Form 5",
-      reminderType: "Scheduled Task",
-      priorityLevel: 100,
+      reminderType: "Meeting Reminder",
+      priorityLevel: 10,
     },
     {
       id: 9,
@@ -103,7 +100,6 @@ function TaskReminder() {
     (item) =>
       item.reminderType.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.completedDate.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.priorityLevel.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.reminderType.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -160,12 +156,11 @@ function TaskReminder() {
     paginationItems.push(
       <button
         key="prev"
-        className="pagination-button previous"
+        className="flex items-center justify-center w-10 h-10 border border-gray-300 bg-white rounded-md hover:bg-gray-100 disabled:opacity-50"
         onClick={handlePrevious}
+        disabled={currentPage === 1}
       >
-        <span>
-          <GrLinkPrevious />
-        </span>
+        <GrLinkPrevious />
       </button>
     );
 
@@ -173,7 +168,11 @@ function TaskReminder() {
       paginationItems.push(
         <button
           key={i}
-          className={`pagination-number ${currentPage === i ? "active" : ""}`}
+          className={`flex items-center justify-center w-9 h-9 border ${
+            currentPage === i
+              ? "bg-blue-500 text-white border-blue-500"
+              : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+          } rounded-md`}
           onClick={() => setCurrentPage(i)}
         >
           {i}
@@ -184,12 +183,11 @@ function TaskReminder() {
     paginationItems.push(
       <button
         key="next"
-        className="pagination-button next"
+        className="flex items-center justify-center w-10 h-10 border border-gray-300 bg-white rounded-md hover:bg-gray-100 disabled:opacity-50"
         onClick={handleNext}
+        disabled={currentPage === totalPages}
       >
-        <span>
-          <GrLinkNext />
-        </span>
+        <GrLinkNext />
       </button>
     );
 
@@ -199,62 +197,65 @@ function TaskReminder() {
   return (
     <div className="follow-up-container">
       <h2 className="follow-up-title">Reminders to my task</h2>
-      <div className="follow-up-controls">
-        <div className="entries-control">
+      <div className="flex justify-between items-center mb-5 flex-wrap md:flex-nowrap gap-4">
+        <div className="flex items-center gap-2 text-gray-600">
           <span>Show</span>
           <select
+            className="border border-gray-300 rounded-md py-1.5 px-2.5 text-sm text-center w-16 focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={entries}
             onChange={(e) => {
-              setEntries(parseInt(e.target.value));
-              setCurrentPage(1); // Reset to first page
+              setEntries(Number(e.target.value));
+              setCurrentPage(1);
             }}
-            className="entries-select"
           >
-            <option value="7">07</option>
-            <option value="10">10</option>
-            <option value="25">25</option>
-            <option value="50">50</option>
+            <option value={7}>7</option>
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={50}>50</option>
           </select>
-          <span>Entries</span>
+          <span>entries</span>
         </div>
 
-        <div className="search-bar">
-          <input
-            type="text"
-            placeholder="Search ..."
-            value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-              setCurrentPage(1); // Reset to first page when searching
-            }}
-            className="search-input"
-          />
+        <div className="flex-grow max-w-md mx-0 my-5 md:my-0 md:mx-5">
+          <div className="relative">
+            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              className="w-full py-2.5 px-3 pl-10 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
         </div>
 
-        <div className="action-buttons">
-          <button className="delete-button" onClick={handleDelete}>
-            <span className="delete-icon">
-              <RiDeleteBinLine />
-            </span>
+        <div className="flex gap-2.5">
+          <button
+            onClick={handleDelete}
+            disabled={selectedIds.length === 0}
+            className={`flex items-center py-2 px-3 rounded-md text-sm border ${
+              selectedIds.length > 0
+                ? "text-red-600 border-red-600 hover:bg-red-50"
+                : "text-gray-400 border-gray-300 cursor-not-allowed"
+            }`}
+          >
+            <RiDeleteBinLine className="mr-1.5 text-base" />
             Delete
           </button>
-          <button
-            className="filters-button"
-            onClick={() => alert("Filter button clicked!")}
-          >
-            <span className="filters-icon">
-              <FaFilter />
-            </span>
+          <button className="flex items-center py-2 px-3 rounded-md text-sm border border-gray-300 bg-white hover:bg-gray-50">
+            <FaFilter className="mr-1.5 text-base" />
             Filters
           </button>
-          <button className="export-button" onClick={handleExport}>
-            <span className="export-icon">
-              <FaFileExport />
-            </span>
+          <button
+            onClick={handleExport}
+            className="flex items-center py-2 px-3 rounded-md text-sm border border-gray-300 bg-white hover:bg-gray-50"
+          >
+            <FaFileExport className="mr-1.5 text-base" />
             Export
           </button>
         </div>
       </div>
+
       <h3 className="list-header-title">Reminder</h3>
       <table>
         <thead>
@@ -295,7 +296,9 @@ function TaskReminder() {
         </tbody>
       </table>
 
-      <div className="pagination-container">{generatePagination()}</div>
+      <div className="flex justify-end items-center mt-5 gap-1.5">
+        {generatePagination()}
+      </div>
     </div>
   );
 }

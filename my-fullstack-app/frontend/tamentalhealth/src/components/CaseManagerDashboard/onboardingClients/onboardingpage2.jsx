@@ -1,29 +1,31 @@
 import React, { useState } from "react";
-import "./index.css";
+const ProgressBar = ({ currentStep, totalSteps }) => {
+  const steps = Array.from({ length: totalSteps }, (_, i) => i + 1);
 
-const ProgressBar = ({ currentPage, totalPages }) => {
   return (
-    <div className="progress-bar-container">
-      {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-        (step, index) => (
-          <div key={step} className="step-container">
+    <div className="flex items-center justify-center mb-6 px-2 sm:px-0 overflow-x-auto w-full">
+      <div className="flex items-center justify-start min-w-max">
+        {steps.map((step, index) => (
+          <div key={step} className="flex items-center">
             <div
-              className={`step-circle ${
-                step <= currentPage ? "active-step" : "inactive-step"
+              className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-xs sm:text-sm font-medium ${
+                step <= currentStep
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 text-gray-600"
               }`}
             >
               {step}
             </div>
-            {index < totalPages - 1 && (
+            {index < steps.length - 1 && (
               <div
-                className={`step-line ${
-                  step < currentPage ? "active-line" : "inactive-line"
+                className={`h-1 sm:h-2 w-3 sm:w-24 md:w-32 lg:w-40 ${
+                  step < currentStep ? "bg-blue-600" : "bg-gray-200"
                 }`}
               ></div>
             )}
           </div>
-        )
-      )}
+        ))}
+      </div>
     </div>
   );
 };
@@ -429,10 +431,10 @@ const OnboardingPage2 = () => {
   const currentSections = sections.slice(startIndex, startIndex + itemsPerPage);
 
   return (
-    <div className="checklist-container">
+    <div className="checklist-container border-[#1E74FF26] mx-auto">
       <h1 className="checklist-title">SCREEN A STUDENT PART 2</h1>
 
-      <ProgressBar currentPage={currentPage} totalPages={totalPages} />
+      <ProgressBar currentStep={currentPage} totalSteps={totalPages} />
 
       <h2 className="checklist-heading">
         A COMPREHENSIVE CHECKLIST FOR IDENTIFYING TRAUMA AND MENTAL HEALTH

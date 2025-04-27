@@ -35,7 +35,7 @@ const TaskReminder = () => {
         </header>
       </div>
       <div className="w-full">
-        <div className="w-full bg-white rounded-lg shadow-sm">
+        <div className="w-full">
           <AddReminder />
         </div>
       </div>

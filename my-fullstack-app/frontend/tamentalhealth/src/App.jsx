@@ -46,6 +46,8 @@ import StudentProgress from "./pages/followUpAdmin/StudentProgress";
 import FinishedFollowUp from "./pages/followUpAdmin/FinishedFollow";
 import TaskReminder from "./pages/followUpAdmin/TaskReminder";
 import SevierityForm from "./pages/CaseManagerPages/SevierityForm";
+import Consultants from "./pages/CaseManagerPages/Consultants";
+import Error from "./pages/Error";
 const App = () => {
   return (
     <Router>
@@ -118,8 +120,10 @@ const App = () => {
           <Route path="follow-up" element={<FollowUp />} />
           {/* Case Manager Upload File Pages*/}
           <Route path="file-uploads" element={<UploadFile />} />
-          {/* Case Manager Upload File Pages*/}
+          {/* Case Manager Sevierity Form */}
           <Route path="sevierity-form" element={<SevierityForm />} />
+          {/* Case Manager Consultant*/}
+          <Route path="view-consultant" element={<Consultants />} />
         </Route>
 
         {/* Follow Up Dashboard */}
@@ -143,6 +147,7 @@ const App = () => {
           {/* Case Manager Follow Up Dashboard Task Reminder*/}
           <Route path="task-reminder" element={<TaskReminder />} />
         </Route>
+        <Route path="*" element={<Error />} />
       </Routes>
     </Router>
   );

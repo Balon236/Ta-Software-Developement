@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { FaFileExport, FaFilter, FaSearch } from "react-icons/fa";
+import { GrLinkNext, GrLinkPrevious } from "react-icons/gr";
 
 const AttendanceView = () => {
   const [entries, setEntries] = useState(7);
@@ -66,6 +67,30 @@ const AttendanceView = () => {
     },
     {
       id: 8,
+      name: "End Development",
+      class: "Form 1",
+      specialty: "Science",
+      dob: "21.03.2021",
+      percentage: "100%",
+    },
+    {
+      id: 9,
+      name: "End Development",
+      class: "Form 1",
+      specialty: "Science",
+      dob: "21.03.2021",
+      percentage: "100%",
+    },
+    {
+      id: 10,
+      name: "End Development",
+      class: "Form 1",
+      specialty: "Science",
+      dob: "21.03.2021",
+      percentage: "100%",
+    },
+    {
+      id: 11,
       name: "End Development",
       class: "Form 1",
       specialty: "Science",
@@ -143,7 +168,7 @@ const AttendanceView = () => {
         className="flex items-center gap-1 px-3 py-2 border border-gray-300 rounded-md bg-white hover:bg-gray-50"
         onClick={handlePreviousPage}
       >
-        <span>←</span> Previous
+        <GrLinkPrevious />
       </button>
     );
 
@@ -169,7 +194,7 @@ const AttendanceView = () => {
         className="flex items-center gap-1 px-3 py-2 border border-gray-300 rounded-md bg-white hover:bg-gray-50"
         onClick={handleNextPage}
       >
-        Next <span>→</span>
+        <GrLinkNext />
       </button>
     );
 
@@ -177,7 +202,7 @@ const AttendanceView = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg p-5 mx-auto shadow-sm">
+    <div className="bg-white rounded-lg p-5 mx-auto border-2 border-[#1E74FF26] shadow-sm">
       <h1 className="text-2xl text-gray-800 mb-5 font-medium">
         View Attendance
       </h1>
@@ -193,6 +218,7 @@ const AttendanceView = () => {
             }}
             className="border border-gray-300 rounded px-2.5 py-1.5 text-sm w-16 text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
+            <option value="12">12</option>
             <option value="7">07</option>
             <option value="10">10</option>
             <option value="25">25</option>

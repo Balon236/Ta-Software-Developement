@@ -9,7 +9,7 @@ const TopConsultants = () => {
   ];
 
   return (
-    <div className="container">
+    <div className="container border-[#1E74FF26]">
       <h1>Top Consultants</h1>
       <div className="header-row">
         <div className="header-cell">Name</div>

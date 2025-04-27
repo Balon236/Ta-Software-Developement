@@ -1,13 +1,23 @@
 import React, { useState } from "react";
-import "./specialty.css";
 import { RiDeleteBinLine } from "react-icons/ri";
-import { FaFileExport, FaFilter, FaRegEye } from "react-icons/fa";
+import { FaFileExport, FaFilter, FaRegEye, FaSearch } from "react-icons/fa";
 import { GrEdit, GrLinkNext, GrLinkPrevious } from "react-icons/gr";
+import { FiLoader } from "react-icons/fi";
 
 const SpecialtyView = () => {
   const [entries, setEntries] = useState(7);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editFormData, setEditFormData] = useState({
+    country: "",
+    schoolName: "",
+    location: "",
+    manager: "",
+    specialty: "",
+  });
+  const [selectedItem, setSelectedItem] = useState(null);
   const [data, setData] = useState([
     {
       id: 1,
@@ -133,6 +143,52 @@ const SpecialtyView = () => {
 
   const [selectedIds, setSelectedIds] = useState([]);
 
+  // Handle edit button click
+  const handleEditClick = (item) => {
+    setSelectedItem(item);
+    setEditFormData({
+      country: item.country,
+      schoolName: item.schoolName,
+      location: item.location,
+      manager: item.manager,
+      specialty: item.specialty,
+    });
+    setShowEditModal(true);
+  };
+
+  // Handle form input changes
+  const handleEditFormChange = (e) => {
+    const { name, value } = e.target;
+    setEditFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Save edited item
+  const handleSaveEdit = async (e) => {
+    e.preventDefault();
+    setIsEditing(true);
+
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Update item data
+      setData((prevData) =>
+        prevData.map((item) =>
+          item.id === selectedItem.id ? { ...item, ...editFormData } : item
+        )
+      );
+
+      setShowEditModal(false);
+    } catch (error) {
+      console.error("Error saving changes:", error);
+    } finally {
+      setIsEditing(false);
+    }
+  };
+
   // Filtered data
   const filteredData = data.filter(
     (item) =>
@@ -165,18 +221,18 @@ const SpecialtyView = () => {
   const handleExport = () => {
     const csvContent =
       "data:text/csv;charset=utf-8," +
-      ["Country,School Name,Class,Manager"]
+      ["Country,School Name,Location,Manager,Specialty"]
         .concat(
           filteredData.map(
             (item) =>
-              `${item.country},${item.schoolName},${item.class},${item.manager}`
+              `${item.country},${item.schoolName},${item.location},${item.manager},${item.specialty}`
           )
         )
         .join("\n");
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "class_data.csv");
+    link.setAttribute("download", "specialty_data.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -196,12 +252,11 @@ const SpecialtyView = () => {
     paginationItems.push(
       <button
         key="prev"
-        className="pagination-button previous"
+        className="flex items-center justify-center w-9 h-9 border border-gray-300 rounded bg-white hover:bg-gray-50 disabled:opacity-50"
         onClick={handlePrevious}
+        disabled={currentPage === 1}
       >
-        <span>
-          <GrLinkPrevious />
-        </span>
+        <GrLinkPrevious />
       </button>
     );
 
@@ -209,7 +264,11 @@ const SpecialtyView = () => {
       paginationItems.push(
         <button
           key={i}
-          className={`pagination-number ${currentPage === i ? "active" : ""}`}
+          className={`w-9 h-9 flex items-center justify-center border rounded ${
+            currentPage === i
+              ? "bg-blue-500 text-white border-blue-500"
+              : "bg-white border-gray-300 hover:bg-gray-50"
+          }`}
           onClick={() => setCurrentPage(i)}
         >
           {i}
@@ -220,12 +279,11 @@ const SpecialtyView = () => {
     paginationItems.push(
       <button
         key="next"
-        className="pagination-button next"
+        className="flex items-center justify-center w-9 h-9 border border-gray-300 rounded bg-white hover:bg-gray-50 disabled:opacity-50"
         onClick={handleNext}
+        disabled={currentPage === totalPages}
       >
-        <span>
-          <GrLinkNext />
-        </span>
+        <GrLinkNext />
       </button>
     );
 
@@ -233,19 +291,129 @@ const SpecialtyView = () => {
   };
 
   return (
-    <div className="specialty-container">
-      <h1 className="specialty-title">ALL Specialties</h1>
+    <div className="bg-white rounded-lg p-5 mx-auto shadow-sm border-2 border-[#1E74FF26]">
+      <h1 className="text-2xl text-gray-800 mb-5 font-medium">
+        ALL Specialties
+      </h1>
 
-      <div className="specialty-controls">
-        <div className="entries-control">
+      {/* Edit Modal */}
+      {showEditModal && (
+        <div className="fixed inset-0 bg-black/50 bg-opacity-50 flex justify-center items-center z-[1000]">
+          <div className="bg-white p-6 rounded-lg max-w-md w-full">
+            <h3 className="text-lg font-medium mb-4">Edit Specialty Details</h3>
+
+            <form onSubmit={handleSaveEdit}>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Country
+                  </label>
+                  <input
+                    type="text"
+                    name="country"
+                    value={editFormData.country}
+                    onChange={handleEditFormChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    School Name
+                  </label>
+                  <input
+                    type="text"
+                    name="schoolName"
+                    value={editFormData.schoolName}
+                    onChange={handleEditFormChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Location
+                  </label>
+                  <input
+                    type="text"
+                    name="location"
+                    value={editFormData.location}
+                    onChange={handleEditFormChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Manager
+                  </label>
+                  <input
+                    type="text"
+                    name="manager"
+                    value={editFormData.manager}
+                    onChange={handleEditFormChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Specialty
+                  </label>
+                  <input
+                    type="text"
+                    name="specialty"
+                    value={editFormData.specialty}
+                    onChange={handleEditFormChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 mt-6">
+                <button
+                  type="button"
+                  className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  onClick={() => setShowEditModal(false)}
+                  disabled={isEditing}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  disabled={isEditing}
+                >
+                  {isEditing ? (
+                    <>
+                      <FiLoader className="animate-spin inline mr-2" />
+                      Saving...
+                    </>
+                  ) : (
+                    "Save Changes"
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      <div className="flex flex-col md:flex-row justify-between items-center mb-5 gap-4">
+        <div className="flex items-center gap-2 text-gray-500">
           <span>Show</span>
           <select
             value={entries}
             onChange={(e) => {
               setEntries(parseInt(e.target.value));
-              setCurrentPage(1); // Reset to first page
+              setCurrentPage(1);
             }}
-            className="entries-select"
+            className="border border-gray-300 rounded px-2.5 py-1.5 text-sm w-16 text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="7">07</option>
             <option value="10">10</option>
@@ -255,55 +423,54 @@ const SpecialtyView = () => {
           <span>Entries</span>
         </div>
 
-        <div className="search-bar">
+        <div className="w-full md:w-auto md:flex-grow md:max-w-md relative">
+          <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+            <FaSearch />
+          </span>
           <input
             type="text"
             placeholder="Search ..."
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
-              setCurrentPage(1); // Reset to first page when searching
+              setCurrentPage(1);
             }}
-            className="search-input"
+            className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
-        <div className="action-buttons">
-          <button className="delete-button" onClick={handleDelete}>
-            <span className="delete-icon">
-              <RiDeleteBinLine />
-            </span>
+        <div className="flex gap-2.5 flex-wrap justify-center">
+          <button
+            className="flex items-center px-3 py-2 rounded-md border border-red-500 text-red-500 hover:bg-red-50 gap-1.5"
+            onClick={handleDelete}
+          >
+            <RiDeleteBinLine />
             Delete
           </button>
           <button
-            className="filters-button"
+            className="flex items-center px-3 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50 gap-1.5"
             onClick={() => alert("Filter button clicked!")}
           >
-            <span className="filters-icon">
-              <FaFilter />
-            </span>
+            <FaFilter />
             Filters
           </button>
-          <button className="export-button" onClick={handleExport}>
-            <span className="export-icon">
-              <FaFileExport />
-            </span>
+          <button
+            className="flex items-center px-3 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50 gap-1.5"
+            onClick={handleExport}
+          >
+            <FaFileExport />
             Export
           </button>
         </div>
       </div>
 
-      <div className="specialty-table-container">
-        <table className="specialty-table">
+      <div className="overflow-x-auto rounded shadow-sm">
+        <table className="w-full border-collapse">
           <thead>
-            <tr className="list-header-title">
-              <th className="checkbox-column">
+            <tr className="bg-gray-50">
+              <th className="w-10 p-4 text-left">
                 <input
                   type="checkbox"
-                  checked={
-                    selectedIds.length === paginatedData.length &&
-                    paginatedData.length > 0
-                  }
                   onChange={(e) => {
                     if (e.target.checked) {
                       setSelectedIds(paginatedData.map((item) => item.id));
@@ -311,46 +478,66 @@ const SpecialtyView = () => {
                       setSelectedIds([]);
                     }
                   }}
+                  checked={
+                    paginatedData.length > 0 &&
+                    selectedIds.length === paginatedData.length
+                  }
+                  className="w-5 h-5 cursor-pointer"
                 />
               </th>
-              <th className="country-column">COUNTRY</th>
-              <th className="school-name-column">SCHOOL NAME</th>
-              <th className="location-column">LOCATION</th>
-              <th className="manager-column">MANAGER</th>
-              <th className="specialty-column">SPECIALTY</th>
-              <th className="action-column">ACTION</th>
+              <th className="p-4 text-left text-blue-500 font-bold">COUNTRY</th>
+              <th className="p-4 text-left text-blue-500 font-bold">
+                SCHOOL NAME
+              </th>
+              <th className="p-4 text-left text-blue-500 font-bold">
+                LOCATION
+              </th>
+              <th className="p-4 text-left text-blue-500 font-bold">MANAGER</th>
+              <th className="p-4 text-left text-blue-500 font-bold">
+                SPECIALTY
+              </th>
+              <th className="p-4 text-center text-blue-500 font-bold">
+                ACTION
+              </th>
             </tr>
           </thead>
           <tbody>
             {paginatedData.map((item) => (
-              <tr key={item.id}>
-                <td className="checkbox-column">
+              <tr
+                key={item.id}
+                className="border-b border-gray-100 hover:bg-gray-50"
+              >
+                <td className="p-4">
                   <input
                     type="checkbox"
                     checked={selectedIds.includes(item.id)}
                     onChange={() => handleSelect(item.id)}
+                    className="w-5 h-5 cursor-pointer"
                   />
                 </td>
-                <td className="country-column">{item.country}</td>
-                <td className="school-name-column">{item.schoolName}</td>
-                <td className="class-column">{item.location}</td>
-                <td className="manager-column">{item.manager}</td>
-                <td className="specialty-column">{item.specialty}</td>
-
-                <td className="action-column">
-                  <div className="action-icons">
-                    <button className="edit-button">
-                      <span className="edit-icon">
+                <td className="p-4">{item.country}</td>
+                <td className="p-4">{item.schoolName}</td>
+                <td className="p-4">{item.location}</td>
+                <td className="p-4">{item.manager}</td>
+                <td className="p-4">{item.specialty}</td>
+                <td className="p-4">
+                  <div className="flex gap-2 justify-center">
+                    <button
+                      className="w-8 h-8 flex items-center justify-center border border-blue-500 text-blue-500 rounded-md hover:bg-blue-50 disabled:opacity-50"
+                      onClick={() => handleEditClick(item)}
+                      disabled={isEditing}
+                    >
+                      {isEditing && item.id === selectedItem?.id ? (
+                        <FiLoader className="animate-spin" />
+                      ) : (
                         <GrEdit />
-                      </span>
+                      )}
                     </button>
-                    <button className="view-button">
-                      <span className="view-icon">
-                        <FaRegEye />
-                      </span>
+                    <button className="w-8 h-8 flex items-center justify-center border border-blue-500 text-blue-500 rounded-md hover:bg-blue-50">
+                      <FaRegEye />
                     </button>
                     <button
-                      className="delete-icon-button"
+                      className="w-8 h-8 flex items-center justify-center border border-red-500 text-red-500 rounded-md hover:bg-red-50"
                       onClick={() => {
                         setData(data.filter((d) => d.id !== item.id));
                         setSelectedIds(
@@ -358,9 +545,7 @@ const SpecialtyView = () => {
                         );
                       }}
                     >
-                      <span className="delete-action-icon">
-                        <RiDeleteBinLine />
-                      </span>
+                      <RiDeleteBinLine />
                     </button>
                   </div>
                 </td>
@@ -370,7 +555,9 @@ const SpecialtyView = () => {
         </table>
       </div>
 
-      <div className="pagination-container">{generatePagination()}</div>
+      <div className="flex justify-end items-center mt-5 gap-1.5">
+        {generatePagination()}
+      </div>
     </div>
   );
 };

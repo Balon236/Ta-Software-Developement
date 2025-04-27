@@ -1,35 +1,45 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
-// Progress Bar Component
-const ProgressBar = ({ currentStep }) => {
-  const steps = [1, 2, 3, 4, 5, 6];
+// Responsive Progress Bar Component
+const ProgressBar = ({ currentStep, totalSteps }) => {
+  const steps = Array.from({ length: totalSteps }, (_, i) => i + 1);
   return (
-    <div className="progress-bar-container">
-      {steps.map((step, index) => (
-        <div key={step} className="step-container">
-          <div
-            className={`step-circle ${
-              step <= currentStep ? "active-step" : "inactive-step"
-            }`}
-          >
-            {step}
-          </div>
-          {index < steps.length - 1 && (
+    <div className="flex items-center justify-center mb-6 px-2 sm:px-0 overflow-x-auto w-full">
+      <div className="flex items-center justify-start min-w-max">
+        {steps.map((step, index) => (
+          <div key={step} className="flex items-center">
             <div
-              className={`step-line ${
-                step < currentStep ? "active-line" : "inactive-line"
+              className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-xs sm:text-sm font-medium ${
+                step <= currentStep
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 text-gray-600"
               }`}
-            ></div>
-          )}
-        </div>
-      ))}
+            >
+              {step}
+            </div>
+            {index < steps.length - 1 && (
+              <div
+                className={`h-1 sm:h-2 w-3 sm:w-24 md:w-32 lg:w-40 ${
+                  step < currentStep ? "bg-blue-600" : "bg-gray-200"
+                }`}
+              ></div>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
 
 // Demographic Data Form (Step 1)
-const DemographicDataForm = ({ onNext, onPrev, formData, setFormData }) => {
+const DemographicDataForm = ({
+  onNext,
+  onPrev,
+  formData,
+  setFormData,
+  currentPage,
+  totalPages,
+}) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -42,87 +52,100 @@ const DemographicDataForm = ({ onNext, onPrev, formData, setFormData }) => {
   };
 
   return (
-    <div className="form-container">
-      <h2 className="form-title">Add On-Boarding Client</h2>
-      <ProgressBar currentStep={1} />
-      <h3 className="form-section-title">DEMOGRAPHIC DATA</h3>
-      <div className="form-fields-container">
-        <div className="form-grid">
-          <div className="form-field">
-            <label className="form-label">School Name</label>
+    <div className="bg-white p-4 md:p-6 ">
+      mx-auto{" "}
+      <h2 className="text-lg font-semibold mb-3 md:mb-4">
+        Add On-Boarding Client
+      </h2>
+      <ProgressBar currentStep={currentPage} totalSteps={totalPages} />
+      <h3 className="text-sm font-medium text-blue-600 mb-3 md:mb-4">
+        DEMOGRAPHIC DATA
+      </h3>
+      <div className="flex flex-col gap-3 md:gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">
+              School Name
+            </label>
             <input
               type="text"
               name="schoolName"
               placeholder="Enter school name"
-              className="form-input"
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm"
               value={formData.demographic.schoolName || ""}
               onChange={handleChange}
             />
           </div>
-          <div className="form-field">
-            <label className="form-label">Participant Code</label>
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">
+              Participant Code
+            </label>
             <input
               type="text"
               name="participantCode"
               placeholder="Enter code"
-              className="form-input"
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm"
               value={formData.demographic.participantCode || ""}
               onChange={handleChange}
             />
           </div>
         </div>
-        <div className="form-grid">
-          <div className="form-field">
-            <label className="form-label">Full Names</label>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">
+              Full Names
+            </label>
             <input
               type="text"
               name="fullName"
               placeholder="Enter full name"
-              className="form-input"
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm"
               value={formData.demographic.fullName || ""}
               onChange={handleChange}
             />
           </div>
-          <div className="form-field">
-            <label className="form-label">Class</label>
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">Class</label>
             <input
               type="text"
               name="class"
               placeholder="Enter class"
-              className="form-input"
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm"
               value={formData.demographic.class || ""}
               onChange={handleChange}
             />
           </div>
         </div>
-        <div className="form-grid">
-          <div className="form-field">
-            <label className="form-label">Date of Birth</label>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">
+              Date of Birth
+            </label>
             <input
               type="date"
               name="dob"
-              className="form-input"
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm"
               value={formData.demographic.dob || ""}
               onChange={handleChange}
             />
           </div>
-          <div className="form-field">
-            <label className="form-label">Age</label>
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">Age</label>
             <input
               type="text"
               name="age"
               placeholder="Enter age"
-              className="form-input"
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm"
               value={formData.demographic.age || ""}
               onChange={handleChange}
             />
           </div>
         </div>
-        <div className="form-grid">
-          <div className="form-field">
-            <label className="form-label">Gender</label>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">Gender</label>
             <select
-              className="form-input"
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm"
               name="gender"
               value={formData.demographic.gender || ""}
               onChange={handleChange}
@@ -133,34 +156,40 @@ const DemographicDataForm = ({ onNext, onPrev, formData, setFormData }) => {
               <option value="Other">Other</option>
             </select>
           </div>
-          <div className="form-field">
-            <label className="form-label">Home Address</label>
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">
+              Home Address
+            </label>
             <input
               type="text"
               name="homeAddress"
               placeholder="Enter home address"
-              className="form-input"
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm"
               value={formData.demographic.homeAddress || ""}
               onChange={handleChange}
             />
           </div>
         </div>
-        <div className="form-grid">
-          <div className="form-field">
-            <label className="form-label">Religion</label>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">
+              Religion
+            </label>
             <input
               type="text"
               name="religion"
               placeholder="Enter religion"
-              className="form-input"
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm"
               value={formData.demographic.religion || ""}
               onChange={handleChange}
             />
           </div>
-          <div className="form-field">
-            <label className="form-label">Division</label>
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">
+              Division
+            </label>
             <select
-              className="form-input"
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm"
               name="division"
               value={formData.demographic.division || ""}
               onChange={handleChange}
@@ -172,26 +201,29 @@ const DemographicDataForm = ({ onNext, onPrev, formData, setFormData }) => {
             </select>
           </div>
         </div>
-        <div className="form-grid">
-          <div className="form-field">
-            <label className="form-label">Email</label>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">Email</label>
             <input
               type="email"
               name="email"
               placeholder="Enter email"
-              className="form-input"
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm"
               value={formData.demographic.email || ""}
               onChange={handleChange}
             />
           </div>
-          <div className="form-field">
-            <label className="form-label">Phone Number</label>
-            <div className="phone-input-container">
-              <span className="phone-prefix">
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">
+              Phone Number
+            </label>
+            <div className="flex w-full">
+              <span className="inline-flex items-center px-2 border border-r-0 border-gray-300 bg-gray-50 rounded-l-md text-xs md:text-sm">
                 <select
                   name="phoneCode"
                   value={formData.demographic.phoneCode || "CM"}
                   onChange={handleChange}
+                  className="bg-transparent text-xs md:text-sm"
                 >
                   <option value="CM">CM +237</option>
                   <option value="GH">+234</option>
@@ -200,21 +232,24 @@ const DemographicDataForm = ({ onNext, onPrev, formData, setFormData }) => {
               <input
                 type="text"
                 name="phoneNumber"
-                className="phone-input"
+                className="flex-1 border border-gray-300 rounded-r-md px-3 py-2 text-sm"
                 value={formData.demographic.phoneNumber || ""}
                 onChange={handleChange}
               />
             </div>
           </div>
         </div>
-        <div className="form-field">
-          <label className="form-label">WhatsApp Number</label>
-          <div className="phone-input-container">
-            <span className="phone-prefix">
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">
+            WhatsApp Number
+          </label>
+          <div className="flex w-full">
+            <span className="inline-flex items-center px-2 border border-r-0 border-gray-300 bg-gray-50 rounded-l-md text-xs md:text-sm">
               <select
                 name="whatsappCode"
                 value={formData.demographic.whatsappCode || "CM"}
                 onChange={handleChange}
+                className="bg-transparent text-xs md:text-sm"
               >
                 <option value="CM">CM +237</option>
                 <option value="GH">+234</option>
@@ -223,18 +258,25 @@ const DemographicDataForm = ({ onNext, onPrev, formData, setFormData }) => {
             <input
               type="text"
               name="whatsappNumber"
-              className="phone-input"
+              className="flex-1 border border-gray-300 rounded-r-md px-3 py-2 text-sm"
               value={formData.demographic.whatsappNumber || ""}
               onChange={handleChange}
             />
           </div>
         </div>
       </div>
-      <div className="form-navigation">
-        <button onClick={onPrev} className="form-button prev-button" disabled>
+      <div className="flex justify-between mt-4 md:mt-6">
+        <button
+          onClick={onPrev}
+          className="px-3 py-2 md:px-4 md:py-2 bg-gray-200 text-gray-700 rounded-md text-xs md:text-sm font-medium disabled:opacity-50"
+          disabled
+        >
           Previous
         </button>
-        <button onClick={onNext} className="form-button">
+        <button
+          onClick={onNext}
+          className="px-3 py-2 md:px-4 md:py-2 bg-blue-600 text-white rounded-md text-xs md:text-sm font-medium"
+        >
           Proceed
         </button>
       </div>
@@ -243,7 +285,14 @@ const DemographicDataForm = ({ onNext, onPrev, formData, setFormData }) => {
 };
 
 // Parental Contact Form (Step 2)
-const ParentalContactForm = ({ onNext, onPrev, formData, setFormData }) => {
+const ParentalContactForm = ({
+  onNext,
+  onPrev,
+  formData,
+  setFormData,
+  currentPage,
+  totalPages,
+}) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -256,98 +305,125 @@ const ParentalContactForm = ({ onNext, onPrev, formData, setFormData }) => {
   };
 
   return (
-    <div className="form-container">
-      <h2 className="form-title">Add On-Boarding Client</h2>
-      <ProgressBar currentStep={2} />
-      <h3 className="form-section-title">PARENTAL CONTACT FOR ANY EMERGENCY</h3>
-      <div className="form-fields-container">
-        <div className="form-field">
-          <label className="form-label">Full Names of Parents/Guardian</label>
+    <div className="bg-white p-4 md:p-6">
+      mx-auto{" "}
+      <h2 className="text-lg font-semibold mb-3 md:mb-4">
+        Add On-Boarding Client
+      </h2>
+      <ProgressBar currentStep={currentPage} totalSteps={totalPages} />
+      <h3 className="text-sm font-medium text-blue-600 mb-3 md:mb-4">
+        PARENTAL CONTACT FOR ANY EMERGENCY
+      </h3>
+      <div className="flex flex-col gap-3 md:gap-4">
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">
+            Full Names of Parents/Guardian
+          </label>
           <input
             type="text"
             name="parentName"
             placeholder="Enter full name of parent"
-            className="form-input"
+            className="border border-gray-300 rounded-md px-3 py-2 text-sm"
             value={formData.parental.parentName || ""}
             onChange={handleChange}
           />
         </div>
-        <div className="form-field">
-          <label className="form-label">Phone Number</label>
-          <div className="phone-input-container">
-            <span className="phone-prefix">🇬🇭</span>
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">
+            Phone Number
+          </label>
+          <div className="flex w-full">
+            <span className="inline-flex items-center px-2 border border-r-0 border-gray-300 bg-gray-50 rounded-l-md text-xs md:text-sm">
+              🇬🇭
+            </span>
             <input
               type="text"
               name="parentPhone"
-              className="phone-input"
+              className="flex-1 border border-gray-300 rounded-r-md px-3 py-2 text-sm"
               value={formData.parental.parentPhone || ""}
               onChange={handleChange}
             />
           </div>
         </div>
-        <div className="form-field">
-          <label className="form-label">Relationship</label>
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">
+            Relationship
+          </label>
           <input
             type="text"
             name="relationship"
             placeholder="Enter relationship"
-            className="form-input"
+            className="border border-gray-300 rounded-md px-3 py-2 text-sm"
             value={formData.parental.relationship || ""}
             onChange={handleChange}
           />
         </div>
-        <div className="form-field">
-          <label className="form-label">Occupation</label>
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">
+            Occupation
+          </label>
           <input
             type="text"
             name="occupation"
             placeholder="Enter occupation"
-            className="form-input"
+            className="border border-gray-300 rounded-md px-3 py-2 text-sm"
             value={formData.parental.occupation || ""}
             onChange={handleChange}
           />
         </div>
-        <div className="form-field">
-          <label className="form-label">WhatsApp Number</label>
-          <div className="phone-input-container">
-            <span className="phone-prefix">🇬🇭</span>
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">
+            WhatsApp Number
+          </label>
+          <div className="flex w-full">
+            <span className="inline-flex items-center px-2 border border-r-0 border-gray-300 bg-gray-50 rounded-l-md text-xs md:text-sm">
+              🇬🇭
+            </span>
             <input
               type="text"
               name="parentWhatsapp"
-              className="phone-input"
+              className="flex-1 border border-gray-300 rounded-r-md px-3 py-2 text-sm"
               value={formData.parental.parentWhatsapp || ""}
               onChange={handleChange}
             />
           </div>
         </div>
-        <div className="form-field">
-          <label className="form-label">Email</label>
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">Email</label>
           <input
             type="email"
             name="parentEmail"
             placeholder="Enter email"
-            className="form-input"
+            className="border border-gray-300 rounded-md px-3 py-2 text-sm"
             value={formData.parental.parentEmail || ""}
             onChange={handleChange}
           />
         </div>
-        <div className="form-field">
-          <label className="form-label">Home Address</label>
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">
+            Home Address
+          </label>
           <input
             type="text"
             name="parentAddress"
             placeholder="Enter home address"
-            className="form-input"
+            className="border border-gray-300 rounded-md px-3 py-2 text-sm"
             value={formData.parental.parentAddress || ""}
             onChange={handleChange}
           />
         </div>
       </div>
-      <div className="form-navigation">
-        <button onClick={onPrev} className="form-button prev-button">
+      <div className="flex justify-between mt-4 md:mt-6">
+        <button
+          onClick={onPrev}
+          className="px-3 py-2 md:px-4 md:py-2 bg-gray-200 text-gray-700 rounded-md text-xs md:text-sm font-medium"
+        >
           Previous
         </button>
-        <button onClick={onNext} className="form-button">
+        <button
+          onClick={onNext}
+          className="px-3 py-2 md:px-4 md:py-2 bg-blue-600 text-white rounded-md text-xs md:text-sm font-medium"
+        >
           Proceed
         </button>
       </div>
@@ -356,7 +432,14 @@ const ParentalContactForm = ({ onNext, onPrev, formData, setFormData }) => {
 };
 
 // Academic History Form (Step 3)
-const AcademicHistoryForm = ({ onNext, onPrev, formData, setFormData }) => {
+const AcademicHistoryForm = ({
+  onNext,
+  onPrev,
+  formData,
+  setFormData,
+  currentPage,
+  totalPages,
+}) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -386,132 +469,147 @@ const AcademicHistoryForm = ({ onNext, onPrev, formData, setFormData }) => {
   };
 
   return (
-    <div className="form-container">
-      <h2 className="form-title">Add On-Boarding Client</h2>
-      <ProgressBar currentStep={3} />
-      <h3 className="form-section-title">ACADEMIC HISTORY AND EXPECTATIONS</h3>
-      <div className="form-fields-container">
-        <div className="form-field">
-          <label className="form-label">Type of Learner</label>
-          <div className="checkbox-group">
-            <label className="checkbox-label">
+    <div className="bg-white p-4 md:p-6 ">
+      mx-auto{" "}
+      <h2 className="text-lg font-semibold mb-3 md:mb-4">
+        Add On-Boarding Client
+      </h2>
+      <ProgressBar currentStep={currentPage} totalSteps={totalPages} />
+      <h3 className="text-sm font-medium text-blue-600 mb-3 md:mb-4">
+        ACADEMIC HISTORY AND EXPECTATIONS
+      </h3>
+      <div className="flex flex-col gap-3 md:gap-4">
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">
+            Type of Learner
+          </label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+            <label className="inline-flex items-center cursor-pointer">
               <input
                 type="checkbox"
-                className="form-checkbox"
+                className="w-4 h-4 md:w-5 md:h-5 border border-gray-300 rounded-md"
                 checked={
                   formData.academic.learnerTypes?.includes("Visual") || false
                 }
                 onChange={() => handleCheckboxChange("Visual")}
               />
-              <span className="checkbox-text">Visual Learner</span>
+              <span className="ml-2 text-xs md:text-sm text-gray-700">
+                Visual Learner
+              </span>
             </label>
-            <label className="checkbox-label">
+            <label className="inline-flex items-center cursor-pointer">
               <input
                 type="checkbox"
-                className="form-checkbox"
+                className="w-4 h-4 md:w-5 md:h-5 border border-gray-300 rounded-md"
                 checked={
                   formData.academic.learnerTypes?.includes("Auditory") || false
                 }
                 onChange={() => handleCheckboxChange("Auditory")}
               />
-              <span className="checkbox-text">Auditory Learner</span>
+              <span className="ml-2 text-xs md:text-sm text-gray-700">
+                Auditory Learner
+              </span>
             </label>
-            <label className="checkbox-label">
+            <label className="inline-flex items-center cursor-pointer">
               <input
                 type="checkbox"
-                className="form-checkbox"
+                className="w-4 h-4 md:w-5 md:h-5 border border-gray-300 rounded-md"
                 checked={
                   formData.academic.learnerTypes?.includes("Kinesthetic") ||
                   false
                 }
                 onChange={() => handleCheckboxChange("Kinesthetic")}
               />
-              <span className="checkbox-text">Kinesthetic Learner</span>
+              <span className="ml-2 text-xs md:text-sm text-gray-700">
+                Kinesthetic Learner
+              </span>
             </label>
-            <label className="checkbox-label">
+            <label className="inline-flex items-center cursor-pointer">
               <input
                 type="checkbox"
-                className="form-checkbox"
+                className="w-4 h-4 md:w-5 md:h-5 border border-gray-300 rounded-md"
                 checked={
                   formData.academic.learnerTypes?.includes("Reading") || false
                 }
                 onChange={() => handleCheckboxChange("Reading")}
               />
-              <span className="checkbox-text">Reading and Writing Learner</span>
+              <span className="ml-2 text-xs md:text-sm text-gray-700">
+                Reading and Writing Learner
+              </span>
             </label>
           </div>
         </div>
-        <div className="form-field">
-          <label className="form-label">
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">
             What are the things you enjoy doing? (List 3)
           </label>
           <textarea
             name="enjoyDoing"
             placeholder="Enter texts"
-            className="form-textarea"
+            className="border border-gray-300 rounded-md px-3 py-2 text-sm min-h-[80px]"
             rows="3"
             value={formData.academic.enjoyDoing || ""}
             onChange={handleChange}
           ></textarea>
         </div>
-        <div className="form-field">
-          <label className="form-label">
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">
             What do you want to be as you grow up?
           </label>
           <textarea
             name="futureGoal"
             placeholder="Enter texts"
-            className="form-textarea"
+            className="border border-gray-300 rounded-md px-3 py-2 text-sm min-h-[80px]"
             rows="3"
             value={formData.academic.futureGoal || ""}
             onChange={handleChange}
           ></textarea>
         </div>
-        <div className="form-field">
-          <label className="form-label">
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">
             Last Year's Performance (Average/Position)
           </label>
-          <div className="performance-grid">
-            <div className="performance-field">
-              <label className="performance-label">First Term</label>
+          <div className="grid grid-cols-2 gap-2 md:gap-4 mt-2">
+            <div className="flex flex-col gap-1">
+              <label className="text-xs text-gray-500">First Term</label>
               <input
                 type="text"
                 name="firstTerm"
                 placeholder="Enter"
-                className="performance-input"
+                className="border border-gray-300 rounded-md px-3 py-2 text-sm"
                 value={formData.academic.firstTerm || ""}
                 onChange={handleChange}
               />
             </div>
-            <div className="performance-field">
-              <label className="performance-label">Second Term</label>
+            <div className="flex flex-col gap-1">
+              <label className="text-xs text-gray-500">Second Term</label>
               <input
                 type="text"
                 name="secondTerm"
                 placeholder="Enter"
-                className="performance-input"
+                className="border border-gray-300 rounded-md px-3 py-2 text-sm"
                 value={formData.academic.secondTerm || ""}
                 onChange={handleChange}
               />
             </div>
-            <div className="performance-field">
-              <label className="performance-label">Third Term</label>
+            <div className="flex flex-col gap-1">
+              <label className="text-xs text-gray-500">Third Term</label>
               <input
                 type="text"
                 name="thirdTerm"
                 placeholder="Enter"
-                className="performance-input"
+                className="border border-gray-300 rounded-md px-3 py-2 text-sm"
                 value={formData.academic.thirdTerm || ""}
                 onChange={handleChange}
               />
             </div>
-            <div className="performance-field">
-              <label className="performance-label">Desired Average</label>
+            <div className="flex flex-col gap-1">
+              <label className="text-xs text-gray-500">Desired Average</label>
               <input
                 type="text"
                 name="desiredAverage"
                 placeholder="Enter"
-                className="performance-input"
+                className="border border-gray-300 rounded-md px-3 py-2 text-sm"
                 value={formData.academic.desiredAverage || ""}
                 onChange={handleChange}
               />
@@ -519,11 +617,17 @@ const AcademicHistoryForm = ({ onNext, onPrev, formData, setFormData }) => {
           </div>
         </div>
       </div>
-      <div className="form-navigation">
-        <button onClick={onPrev} className="form-button prev-button">
+      <div className="flex justify-between mt-4 md:mt-6">
+        <button
+          onClick={onPrev}
+          className="px-3 py-2 md:px-4 md:py-2 bg-gray-200 text-gray-700 rounded-md text-xs md:text-sm font-medium"
+        >
           Previous
         </button>
-        <button onClick={onNext} className="form-button">
+        <button
+          onClick={onNext}
+          className="px-3 py-2 md:px-4 md:py-2 bg-blue-600 text-white rounded-md text-xs md:text-sm font-medium"
+        >
           Proceed
         </button>
       </div>
@@ -532,7 +636,14 @@ const AcademicHistoryForm = ({ onNext, onPrev, formData, setFormData }) => {
 };
 
 // Physical Examination Form (Step 4)
-const PhysicalExaminationForm = ({ onNext, onPrev, formData, setFormData }) => {
+const PhysicalExaminationForm = ({
+  onNext,
+  onPrev,
+  formData,
+  setFormData,
+  currentPage,
+  totalPages,
+}) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -545,122 +656,143 @@ const PhysicalExaminationForm = ({ onNext, onPrev, formData, setFormData }) => {
   };
 
   return (
-    <div className="form-container">
-      <h2 className="form-title">Add On-Boarding Client</h2>
-      <ProgressBar currentStep={4} />
-      <h3 className="form-section-title">PHYSICAL EXAMINATION</h3>
-      <div className="form-fields-container">
-        <div className="form-grid">
-          <div className="form-field">
-            <label className="form-label">Height</label>
+    <div className="bg-white p-4 md:p-6">
+      mx-auto{" "}
+      <h2 className="text-lg font-semibold mb-3 md:mb-4">
+        Add On-Boarding Client
+      </h2>
+      <ProgressBar currentStep={currentPage} totalSteps={totalPages} />
+      <h3 className="text-sm font-medium text-blue-600 mb-3 md:mb-4">
+        PHYSICAL EXAMINATION
+      </h3>
+      <div className="flex flex-col gap-3 md:gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">Height</label>
             <input
               type="text"
               name="height"
               placeholder="Enter height in metres"
-              className="form-input"
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm"
               value={formData.physical.height || ""}
               onChange={handleChange}
             />
           </div>
-          <div className="form-field">
-            <label className="form-label">Weight</label>
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">Weight</label>
             <input
               type="text"
               name="weight"
               placeholder="Enter weight"
-              className="form-input"
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm"
               value={formData.physical.weight || ""}
               onChange={handleChange}
             />
           </div>
         </div>
-        <div className="form-grid">
-          <div className="form-field">
-            <label className="form-label">Body Mass Index (BMI)</label>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">
+              Body Mass Index (BMI)
+            </label>
             <input
               type="text"
               name="bmi"
               placeholder="Enter BMI Value"
-              className="form-input"
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm"
               value={formData.physical.bmi || ""}
               onChange={handleChange}
             />
           </div>
-          <div className="form-field">
-            <label className="form-label">Menarch</label>
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">Menarch</label>
             <input
               type="text"
               name="menarch"
               placeholder="Enter menarch"
-              className="form-input"
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm"
               value={formData.physical.menarch || ""}
               onChange={handleChange}
             />
           </div>
         </div>
-        <div className="form-grid">
-          <div className="form-field">
-            <label className="form-label">Vision (R.....L.....)</label>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">
+              Vision (R.....L.....)
+            </label>
             <input
               type="text"
               name="vision"
-              className="form-input"
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm"
               value={formData.physical.vision || ""}
               onChange={handleChange}
             />
           </div>
-          <div className="form-field">
-            <label className="form-label">Waist Circumference</label>
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">
+              Waist Circumference
+            </label>
             <input
               type="text"
               name="waist"
               placeholder="Enter age"
-              className="form-input"
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm"
               value={formData.physical.waist || ""}
               onChange={handleChange}
             />
           </div>
         </div>
-        <div className="form-grid">
-          <div className="form-field">
-            <label className="form-label">Upper Arm Circumferences</label>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">
+              Upper Arm Circumferences
+            </label>
             <input
               type="text"
               name="armCircumference"
-              className="form-input"
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm"
               value={formData.physical.armCircumference || ""}
               onChange={handleChange}
             />
           </div>
-          <div className="form-field">
-            <label className="form-label">E/N/T</label>
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">E/N/T</label>
             <input
               type="text"
               name="ent"
               placeholder="Enter home address"
-              className="form-input"
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm"
               value={formData.physical.ent || ""}
               onChange={handleChange}
             />
           </div>
         </div>
-        <div className="form-field">
-          <label className="form-label">Any Observed Physical Condition?</label>
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">
+            Any Observed Physical Condition?
+          </label>
           <textarea
             name="observedCondition"
             placeholder="Enter observation"
-            className="form-textarea"
+            className="border border-gray-300 rounded-md px-3 py-2 text-sm min-h-[80px]"
             rows="3"
             value={formData.physical.observedCondition || ""}
             onChange={handleChange}
           ></textarea>
         </div>
       </div>
-      <div className="form-navigation">
-        <button onClick={onPrev} className="form-button prev-button">
+      <div className="flex justify-between mt-4 md:mt-6">
+        <button
+          onClick={onPrev}
+          className="px-3 py-2 md:px-4 md:py-2 bg-gray-200 text-gray-700 rounded-md text-xs md:text-sm font-medium"
+        >
           Previous
         </button>
-        <button onClick={onNext} className="form-button">
+        <button
+          onClick={onNext}
+          className="px-3 py-2 md:px-4 md:py-2 bg-blue-600 text-white rounded-md text-xs md:text-sm font-medium"
+        >
           Proceed
         </button>
       </div>
@@ -669,7 +801,14 @@ const PhysicalExaminationForm = ({ onNext, onPrev, formData, setFormData }) => {
 };
 
 // Pediatric ACES Form (Step 5)
-const PediatricACESForm = ({ onNext, onPrev, formData, setFormData }) => {
+const PediatricACESForm = ({
+  onNext,
+  onPrev,
+  formData,
+  setFormData,
+  currentPage,
+  totalPages,
+}) => {
   const [score, setScore] = useState(1);
   const questions = [
     {
@@ -755,26 +894,28 @@ const PediatricACESForm = ({ onNext, onPrev, formData, setFormData }) => {
   };
 
   return (
-    <div className="form-container">
-      <h2 className="form-title">Add On-Boarding Client</h2>
-      <ProgressBar currentStep={5} />
-      <h3 className="form-section-title">
+    <div className="bg-white p-4 md:p-6 ">
+      <h2 className="text-lg font-semibold mb-3 md:mb-4">
+        Add On-Boarding Client
+      </h2>
+      <ProgressBar currentStep={currentPage} totalSteps={totalPages} />
+      <h3 className="text-sm font-medium text-blue-600 mb-3 md:mb-4">
         PEDIATRIC ACES AND RELATED LIFE EVENTS SCREENER (PEARLS 0-11YEARS)
       </h3>
-      <h4 className="form-subsection-title">
+      <h4 className="text-sm font-medium text-gray-700 mb-3 md:mb-4">
         Part 5B: SOCIAL DETERMINANTS OF TRAUMA
       </h4>
-      <div className="aces-questions-container">
+      <div className="flex flex-col gap-4 md:gap-6 mt-3 md:mt-4">
         {questions.map((question, index) => (
-          <div key={index} className="aces-question">
-            <p className="aces-question-text">
+          <div key={index} className="flex flex-col gap-1 md:gap-2">
+            <p className="text-xs md:text-sm font-medium text-gray-700">
               {index + 1}. {question.text}
             </p>
-            <div className="aces-options">
-              <label className="aces-option">
+            <div className="flex gap-2 md:gap-4">
+              <label className="inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
-                  className="form-checkbox"
+                  className="w-4 h-4 md:w-5 md:h-5 border border-gray-300 rounded-md"
                   checked={formData.aces?.questions?.[index]?.yes || false}
                   onChange={(e) =>
                     handleQuestionChange(
@@ -784,12 +925,14 @@ const PediatricACESForm = ({ onNext, onPrev, formData, setFormData }) => {
                     )
                   }
                 />
-                <span className="aces-option-text">YES</span>
+                <span className="ml-1 md:ml-2 text-xs md:text-sm text-gray-700">
+                  YES
+                </span>
               </label>
-              <label className="aces-option">
+              <label className="inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
-                  className="form-checkbox"
+                  className="w-4 h-4 md:w-5 md:h-5 border border-gray-300 rounded-md"
                   checked={!formData.aces?.questions?.[index]?.yes || false}
                   onChange={(e) =>
                     handleQuestionChange(
@@ -799,12 +942,14 @@ const PediatricACESForm = ({ onNext, onPrev, formData, setFormData }) => {
                     )
                   }
                 />
-                <span className="aces-option-text">NO</span>
+                <span className="ml-1 md:ml-2 text-xs md:text-sm text-gray-700">
+                  NO
+                </span>
               </label>
             </div>
             <textarea
               placeholder="Comment..."
-              className="aces-comment"
+              className="border border-gray-300 rounded-md px-3 py-2 text-xs md:text-sm min-h-[60px]"
               rows="2"
               value={formData.aces?.questions?.[index]?.comment || ""}
               onChange={(e) => handleCommentChange(question.id, e.target.value)}
@@ -812,14 +957,20 @@ const PediatricACESForm = ({ onNext, onPrev, formData, setFormData }) => {
           </div>
         ))}
       </div>
-      <p className="aces-score">
+      <p className="text-xs md:text-sm font-medium text-gray-700 mt-3 md:mt-4">
         TOTAL SCORE: Sum of Number of YES = {formData.aces?.score || score}/7
       </p>
-      <div className="form-navigation">
-        <button onClick={onPrev} className="form-button prev-button">
+      <div className="flex justify-between mt-4 md:mt-6">
+        <button
+          onClick={onPrev}
+          className="px-3 py-2 md:px-4 md:py-2 bg-gray-200 text-gray-700 rounded-md text-xs md:text-sm font-medium"
+        >
           Previous
         </button>
-        <button onClick={onNext} className="form-button">
+        <button
+          onClick={onNext}
+          className="px-3 py-2 md:px-4 md:py-2 bg-blue-600 text-white rounded-md text-xs md:text-sm font-medium"
+        >
           Proceed
         </button>
       </div>
@@ -828,7 +979,14 @@ const PediatricACESForm = ({ onNext, onPrev, formData, setFormData }) => {
 };
 
 // Final Question & Summary Form (Step 6)
-const FinalQuestionForm = ({ onPrev, formData, setFormData, onSubmit }) => {
+const FinalQuestionForm = ({
+  onPrev,
+  formData,
+  setFormData,
+  onSubmit,
+  currentPage,
+  totalPages,
+}) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -841,71 +999,87 @@ const FinalQuestionForm = ({ onPrev, formData, setFormData, onSubmit }) => {
   };
 
   return (
-    <div className="form-container">
-      <h2 className="form-title">Add On-Boarding Client</h2>
-      <ProgressBar currentStep={6} />
-      <h3 className="form-section-title">FINAL QUESTION & SUMMARY</h3>
-      <div className="form-fields-container">
-        <div className="form-field">
-          <label className="form-label">
+    <div className="bg-white p-4 md:p-6 mx-auto">
+      <h2 className="text-lg font-semibold mb-3 md:mb-4">
+        Add On-Boarding Client
+      </h2>
+      <ProgressBar currentStep={currentPage} totalSteps={totalPages} />
+      <h3 className="text-sm font-medium text-blue-600 mb-3 md:mb-4">
+        FINAL QUESTION & SUMMARY
+      </h3>
+      <div className="flex flex-col gap-3 md:gap-4">
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">
             Do you believe that these experiences have affected your Education,
             Relationships, health or other aspects of your life?
           </label>
-          <div className="radio-group">
-            <label className="radio-option">
+          <div className="flex flex-wrap gap-2 md:gap-4 mt-2">
+            <label className="inline-flex items-center cursor-pointer">
               <input
                 type="radio"
                 name="impact"
-                className="form-radio"
+                className="w-4 h-4 md:w-5 md:h-5 border border-gray-300 rounded-full"
                 value="So Much"
                 checked={formData.final?.impact === "So Much"}
                 onChange={handleChange}
               />
-              <span className="radio-text">So Much</span>
+              <span className="ml-1 md:ml-2 text-xs md:text-sm text-gray-700">
+                So Much
+              </span>
             </label>
-            <label className="radio-option">
+            <label className="inline-flex items-center cursor-pointer">
               <input
                 type="radio"
                 name="impact"
-                className="form-radio"
+                className="w-4 h-4 md:w-5 md:h-5 border border-gray-300 rounded-full"
                 value="Some"
                 checked={formData.final?.impact === "Some"}
                 onChange={handleChange}
               />
-              <span className="radio-text">Some</span>
+              <span className="ml-1 md:ml-2 text-xs md:text-sm text-gray-700">
+                Some
+              </span>
             </label>
-            <label className="radio-option">
+            <label className="inline-flex items-center cursor-pointer">
               <input
                 type="radio"
                 name="impact"
-                className="form-radio"
+                className="w-4 h-4 md:w-5 md:h-5 border border-gray-300 rounded-full"
                 value="Alot"
                 checked={formData.final?.impact === "Alot"}
                 onChange={handleChange}
               />
-              <span className="radio-text">Alot</span>
+              <span className="ml-1 md:ml-2 text-xs md:text-sm text-gray-700">
+                Alot
+              </span>
             </label>
           </div>
         </div>
-        <div className="form-field">
-          <label className="form-label">
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">
             SUMMARY BEHAVIORAL REPORT AND OTHER DETAILS OR COMMENTS
           </label>
           <textarea
             name="summary"
             placeholder="Collect feedback from parents, discipline department, class teachers or classmates"
-            className="form-textarea"
+            className="border border-gray-300 rounded-md px-3 py-2 text-sm min-h-[80px] md:min-h-[100px]"
             rows="5"
             value={formData.final?.summary || ""}
             onChange={handleChange}
           ></textarea>
         </div>
       </div>
-      <div className="form-navigation">
-        <button onClick={onPrev} className="form-button prev-button">
+      <div className="flex justify-between mt-4 md:mt-6">
+        <button
+          onClick={onPrev}
+          className="px-3 py-2 md:px-4 md:py-2 bg-gray-200 text-gray-700 rounded-md text-xs md:text-sm font-medium"
+        >
           Previous
         </button>
-        <button onClick={onSubmit} className="form-button">
+        <button
+          onClick={onSubmit}
+          className="px-3 py-2 md:px-4 md:py-2 bg-blue-600 text-white rounded-md text-xs md:text-sm font-medium"
+        >
           Save and Move to Part Two
         </button>
       </div>
@@ -916,6 +1090,7 @@ const FinalQuestionForm = ({ onPrev, formData, setFormData, onSubmit }) => {
 // Main App Component
 const OnboardingForm = ({ onSubmit }) => {
   const [step, setStep] = useState(1);
+  const totalSteps = 6;
   const [formData, setFormData] = useState({
     demographic: {},
     parental: {},
@@ -927,28 +1102,30 @@ const OnboardingForm = ({ onSubmit }) => {
 
   const handleNext = () => {
     setStep(step + 1);
+    window.scrollTo(0, 0);
   };
 
   const handlePrev = () => {
     setStep(step - 1);
+    window.scrollTo(0, 0);
   };
 
   const handleSubmit = () => {
-    // Here you would typically send the formData to your backend
     console.log("Form submitted:", formData);
-    // Call the onSubmit prop passed from parent to navigate to page2
     if (onSubmit) {
       onSubmit();
     }
   };
 
   return (
-    <div className="app-container">
+    <div className="p-0 mx-auto md:p-0 min-h-screen">
       {step === 1 && (
         <DemographicDataForm
           onNext={handleNext}
           formData={formData}
           setFormData={setFormData}
+          currentPage={step}
+          totalPages={totalSteps}
         />
       )}
       {step === 2 && (
@@ -957,6 +1134,8 @@ const OnboardingForm = ({ onSubmit }) => {
           onPrev={handlePrev}
           formData={formData}
           setFormData={setFormData}
+          currentPage={step}
+          totalPages={totalSteps}
         />
       )}
       {step === 3 && (
@@ -965,6 +1144,8 @@ const OnboardingForm = ({ onSubmit }) => {
           onPrev={handlePrev}
           formData={formData}
           setFormData={setFormData}
+          currentPage={step}
+          totalPages={totalSteps}
         />
       )}
       {step === 4 && (
@@ -973,6 +1154,8 @@ const OnboardingForm = ({ onSubmit }) => {
           onPrev={handlePrev}
           formData={formData}
           setFormData={setFormData}
+          currentPage={step}
+          totalPages={totalSteps}
         />
       )}
       {step === 5 && (
@@ -981,6 +1164,8 @@ const OnboardingForm = ({ onSubmit }) => {
           onPrev={handlePrev}
           formData={formData}
           setFormData={setFormData}
+          currentPage={step}
+          totalPages={totalSteps}
         />
       )}
       {step === 6 && (
@@ -989,6 +1174,8 @@ const OnboardingForm = ({ onSubmit }) => {
           formData={formData}
           setFormData={setFormData}
           onSubmit={handleSubmit}
+          currentPage={step}
+          totalPages={totalSteps}
         />
       )}
     </div>

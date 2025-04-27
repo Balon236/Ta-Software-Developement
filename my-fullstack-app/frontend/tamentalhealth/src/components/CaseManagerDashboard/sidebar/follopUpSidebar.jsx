@@ -1,11 +1,17 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { MdDashboard, MdAccountBox, MdLogout } from "react-icons/md";
+import {
+  MdDashboard,
+  MdAccountBox,
+  MdLogout,
+  MdMenu,
+  MdClose,
+} from "react-icons/md";
 import logo from "../../../assets/logo.png";
 import { FaSignalMessenger, FaBlog } from "react-icons/fa6";
 
 // Reusable NavItem component
-const NavItem = ({ to, icon: Icon, label, exact }) => (
+const NavItem = ({ to, icon: Icon, label, exact, onClick }) => (
   <NavLink
     to={to}
     end={exact}
@@ -16,6 +22,7 @@ const NavItem = ({ to, icon: Icon, label, exact }) => (
           : "text-gray-400 hover:bg-primary/20"
       }`
     }
+    onClick={onClick}
   >
     {({ isActive }) => (
       <div className="flex items-center p-2 gap-2.5 cursor-pointer">
@@ -36,6 +43,20 @@ const NavItem = ({ to, icon: Icon, label, exact }) => (
 
 const FollowUpSidebar = () => {
   const navigate = useNavigate();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      if (window.innerWidth >= 768) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Menu items data structure for better maintainability
   const menuItems = [
@@ -80,6 +101,11 @@ const FollowUpSidebar = () => {
       icon: MdAccountBox,
       label: "Finished Follow Up Student",
     },
+    {
+      to: "/follow-up-dashboard/task-reminder",
+      icon: MdAccountBox,
+      label: "  Reminders to my task",
+    },
   ];
 
   const handleLogout = () => {
@@ -89,39 +115,68 @@ const FollowUpSidebar = () => {
   };
 
   return (
-    <div className="border-4 border-white rounded-lg w-[250px] transition duration-300 ease-linear">
-      <div className="flex flex-col">
-        <div className="p-4">
-          <img src={logo} alt="TA Global Mental Health" className="w-40" />
-        </div>
+    <>
+      {/* Mobile Menu Button */}
+      <button
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        className="fixed top-4 left-4 z-50 p-2 rounded-md bg-blue-500 text-white md:hidden"
+      >
+        {isMobileMenuOpen ? <MdClose size={24} /> : <MdMenu size={24} />}
+      </button>
 
-        <div className="flex flex-col gap-2.5 transition duration-200 px-2 py-4 overflow-y-auto max-h-[70vh]">
-          {menuItems.map((item, index) => (
-            <NavItem
-              key={index}
-              to={item.to}
-              icon={item.icon}
-              label={item.label}
-              exact={item.exact}
-            />
-          ))}
-        </div>
+      {/* Overlay for mobile */}
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 bg-opacity-50 z-40 md:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
 
-        <div className="mt-8 flex flex-col gap-2.5 px-2 py-4">
-          <div className="flex items-center p-2 bg-red-100 rounded-md">
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-5 border-none bg-transparent text-red-500"
-            >
-              <div className="p-2 rounded-md !bg-transparent !text-gray-600">
-                <MdLogout className="text-red-500" />
-              </div>
-              <span className="flex items-center">Go Back</span>
-            </button>
+      {/* Sidebar */}
+      <div
+        className={`fixed md:relative border-4 border-white rounded-lg w-[250px] transition-all duration-300 ease-linear z-50
+          ${
+            isMobile
+              ? isMobileMenuOpen
+                ? "left-0"
+                : "-left-[250px]"
+              : "left-0"
+          }`}
+      >
+        <div className="flex flex-col h-screen bg-white">
+          <div className="p-4">
+            <img src={logo} alt="TA Global Mental Health" className="w-40" />
+          </div>
+
+          <div className="flex flex-col gap-2.5 transition duration-200 px-2 py-4 overflow-y-auto flex-grow">
+            {menuItems.map((item, index) => (
+              <NavItem
+                key={index}
+                to={item.to}
+                icon={item.icon}
+                label={item.label}
+                exact={item.exact}
+                onClick={() => isMobile && setIsMobileMenuOpen(false)}
+              />
+            ))}
+          </div>
+
+          <div className="mt-auto flex flex-col gap-2.5 px-2 py-4">
+            <div className="flex items-center p-2 bg-red-100 rounded-md">
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-5 border-none bg-transparent text-red-500"
+              >
+                <div className="p-2 rounded-md !bg-transparent !text-gray-600">
+                  <MdLogout className="text-red-500" />
+                </div>
+                <span className="flex items-center">Go Back</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -1,67 +1,77 @@
 import React, { useState } from "react";
-import "./index.css";
-export default function createTask() {
+
+export default function CreateTask() {
   const [taskName, setTaskName] = useState("");
   const [taskDescription, setTaskDescription] = useState("");
   const [messageContent, setMessageContent] = useState("");
 
   const handleSave = () => {
-    if (!selectManager || !messageContent) {
+    if (!taskName || !taskDescription || !messageContent) {
       alert("Please fill in all fields");
       return;
     }
-    console.log("Saved Message:", {
-      selectManager,
+    console.log("Task Created:", {
+      taskName,
       taskDescription,
       messageContent,
     });
-    alert("Message saved successfully!");
-    setSelectManager("");
+    alert("Task created successfully!");
+    setTaskName("");
+    setTaskDescription("");
     setMessageContent("");
   };
 
   return (
-    <div className="create-message-container">
-      <div className="create-message-content">
-        <h2 className="create-message-title">Add New Task</h2>
-        <div className="form-group">
-          <label className="label">Task Name</label>
+    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+      <div className=" mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6 sm:p-8">
+        <h2 className="text-2xl font-bold text-gray-800 mb-6">Add New Task</h2>
 
-          <input
-            type="text"
-            name="date"
-            className="create-task-input"
-            placeholder="Enter task name"
-            onChange={(e) => setTaskName(e.target.value)}
-            value={taskName}
-          />
-        </div>
-        <div className="form-group">
-          <label className="label">Task Name</label>
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Task Name
+            </label>
+            <input
+              type="text"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+              placeholder="Enter task name"
+              value={taskName}
+              onChange={(e) => setTaskName(e.target.value)}
+            />
+          </div>
 
-          <input
-            type="text"
-            className="create-task-input"
-            name="date"
-            placeholder="Enter text explaination"
-            onChange={(e) => setTaskDescription(e.target.value)}
-            value={taskDescription}
-          />
-        </div>
-        <div className="form-group">
-          <label className="label">Enter message</label>
-          <textarea
-            type="text"
-            className="input"
-            placeholder="Enter Message"
-            value={messageContent}
-            onChange={(e) => setMessageContent(e.target.value)}
-          />
-        </div>
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Task Description
+            </label>
+            <input
+              type="text"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+              placeholder="Enter task description"
+              value={taskDescription}
+              onChange={(e) => setTaskDescription(e.target.value)}
+            />
+          </div>
 
-        <button className="save-button" onClick={handleSave}>
-          Create Task
-        </button>
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Additional Details
+            </label>
+            <textarea
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition min-h-[120px]"
+              placeholder="Enter additional details"
+              value={messageContent}
+              onChange={(e) => setMessageContent(e.target.value)}
+            />
+          </div>
+
+          <button
+            onClick={handleSave}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
+          >
+            Create Task
+          </button>
+        </div>
       </div>
     </div>
   );

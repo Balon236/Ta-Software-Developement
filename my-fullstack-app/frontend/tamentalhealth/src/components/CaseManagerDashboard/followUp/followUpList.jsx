@@ -2,12 +2,30 @@ import React, { useState } from "react";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { FaFileExport, FaFilter, FaRegEye } from "react-icons/fa";
 import { GrEdit, GrLinkNext, GrLinkPrevious } from "react-icons/gr";
+import { FiLoader } from "react-icons/fi";
 import profie from "../../../assets/profile.jpg";
 
 function FollowUpList() {
+  // State for pagination and filtering
   const [entries, setEntries] = useState(7);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  // State for edit functionality
+  const [isEditing, setIsEditing] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [editFormData, setEditFormData] = useState({
+    studentName: "",
+    code: "",
+    class: "",
+    screeningResult: "",
+    consultant: "",
+    consResult: "",
+  });
+
+  // Sample data
   const [data, setData] = useState([
     {
       id: 1,
@@ -151,9 +169,7 @@ function FollowUpList() {
     },
   ]);
 
-  const [selectedIds, setSelectedIds] = useState([]);
-
-  // Filtered data
+  // Filter data based on search query
   const filteredData = data.filter(
     (item) =>
       item.studentName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -171,18 +187,27 @@ function FollowUpList() {
     currentPage * entries
   );
 
+  // Handle row selection
   const handleSelect = (id) => {
     setSelectedIds((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
   };
 
-  const handleDelete = () => {
-    const newData = data.filter((item) => !selectedIds.includes(item.id));
-    setData(newData);
-    setSelectedIds([]);
+  // Handle bulk delete
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const newData = data.filter((item) => !selectedIds.includes(item.id));
+      setData(newData);
+      setSelectedIds([]);
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
+  // Handle export to CSV
   const handleExport = () => {
     const csvContent =
       "data:text/csv;charset=utf-8," +
@@ -203,6 +228,7 @@ function FollowUpList() {
     document.body.removeChild(link);
   };
 
+  // Pagination handlers
   const handlePrevious = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
@@ -211,18 +237,57 @@ function FollowUpList() {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
 
+  // Edit functionality
+  const handleEditClick = (item) => {
+    setSelectedItem(item);
+    setEditFormData({
+      studentName: item.studentName,
+      code: item.code,
+      class: item.class,
+      screeningResult: item.screeningResult,
+      consultant: item.consultant,
+      consResult: item.consResult,
+    });
+    setIsEditing(true);
+  };
+
+  const handleSaveEdit = async (e) => {
+    e.preventDefault();
+    setIsEditing(true);
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      setData(
+        data.map((item) =>
+          item.id === selectedItem.id ? { ...item, ...editFormData } : item
+        )
+      );
+      setIsEditing(false);
+      setSelectedItem(null);
+    } catch (error) {
+      console.error("Error saving edit:", error);
+      setIsEditing(false);
+    }
+  };
+
+  const handleEditFormChange = (e) => {
+    const { name, value } = e.target;
+    setEditFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Generate pagination buttons
   const generatePagination = () => {
     let paginationItems = [];
 
     paginationItems.push(
       <button
         key="prev"
-        className="flex items-center justify-center w-10 h-10 border border-gray-300 bg-white rounded-md hover:bg-gray-100"
+        className="w-9 h-9 flex items-center justify-center border border-gray-300 bg-white rounded cursor-pointer hover:bg-gray-50 disabled:opacity-50"
         onClick={handlePrevious}
+        disabled={currentPage === 1}
       >
-        <span>
-          <GrLinkPrevious />
-        </span>
+        <GrLinkPrevious />
       </button>
     );
 
@@ -230,10 +295,10 @@ function FollowUpList() {
       paginationItems.push(
         <button
           key={i}
-          className={`flex items-center justify-center w-9 h-9 border rounded-md ${
+          className={`w-9 h-9 flex items-center justify-center border rounded ${
             currentPage === i
-              ? "bg-blue-500 text-white border-blue-500"
-              : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+              ? "bg-blue-600 text-white border-blue-600"
+              : "bg-white border-gray-300 hover:bg-gray-50"
           }`}
           onClick={() => setCurrentPage(i)}
         >
@@ -245,12 +310,11 @@ function FollowUpList() {
     paginationItems.push(
       <button
         key="next"
-        className="flex items-center justify-center w-10 h-10 border border-gray-300 bg-white rounded-md hover:bg-gray-100"
+        className="w-9 h-9 flex items-center justify-center border border-gray-300 bg-white rounded cursor-pointer hover:bg-gray-50 disabled:opacity-50"
         onClick={handleNext}
+        disabled={currentPage === totalPages}
       >
-        <span>
-          <GrLinkNext />
-        </span>
+        <GrLinkNext />
       </button>
     );
 
@@ -258,158 +322,173 @@ function FollowUpList() {
   };
 
   return (
-    <div className="p-5 bg-white border-2 border-blue-100/20 rounded-lg shadow-sm">
-      <h2 className="text-2xl text-gray-800 mb-5 font-medium">
+    <div className="mx-auto p-4 sm:p-6 bg-white border-2 border-blue-100 rounded-lg shadow-sm">
+      <h2 className="text-xl sm:text-2xl text-gray-800 font-medium mb-4 sm:mb-5">
         Follow Up List
       </h2>
 
-      <div className="flex justify-between items-center mb-5 flex-wrap md:flex-nowrap">
-        <div className="flex items-center gap-2 text-gray-600">
-          <span>Show</span>
+      {/* Controls Section */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3 sm:gap-4">
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <span className="text-sm sm:text-base">Show</span>
           <select
-            className="border border-gray-300 rounded-md py-1.5 px-2.5 text-sm text-center w-16"
             value={entries}
-            onChange={(e) => setEntries(Number(e.target.value))}
+            onChange={(e) => {
+              setEntries(parseInt(e.target.value));
+              setCurrentPage(1);
+            }}
+            className="border border-gray-300 rounded px-2 py-1 text-sm sm:text-base"
           >
-            <option value={7}>7</option>
-            <option value={10}>10</option>
-            <option value={20}>20</option>
-            <option value={50}>50</option>
+            <option value="7">07</option>
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
           </select>
-          <span>entries</span>
+          <span className="text-sm sm:text-base">Entries</span>
         </div>
 
-        <div className="flex-grow max-w-md mx-0 my-5 md:my-0 md:mx-5">
+        <div className="w-full sm:flex-grow sm:max-w-[500px] mx-0 sm:mx-3">
           <input
             type="text"
-            className="w-full py-2.5 px-3 border border-gray-300 rounded-md text-sm bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2216%22 height=%2216%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23999%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><circle cx=%2211%22 cy=%2211%22 r=%228%22/><path d=%22M21 21l-4.35-4.35%22/></svg>')] bg-no-repeat bg-[length:16px_16px] bg-[12px_center] pl-10"
-            placeholder="Search..."
+            placeholder="Search ..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="w-full px-8 sm:px-10 py-2 border border-gray-300 rounded text-sm bg-no-repeat bg-[10px] sm:bg-[12px]"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='M21 21l-4.35-4.35'/%3E%3C/svg%3E")`,
+            }}
           />
         </div>
 
-        <div className="flex gap-2.5">
+        <div className="flex gap-2 flex-wrap justify-start sm:justify-end w-full sm:w-auto">
           <button
-            onClick={handleDelete}
-            disabled={selectedIds.length === 0}
-            className={`flex items-center py-2 px-3 rounded-md text-sm cursor-pointer border ${
+            className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-2 rounded transition text-sm sm:text-base ${
               selectedIds.length > 0
-                ? "text-red-600 border-red-600 hover:bg-red-50"
-                : "text-gray-400 border-gray-300 cursor-not-allowed"
+                ? "bg-red-500 text-white hover:bg-red-600"
+                : "bg-gray-200 text-gray-500 cursor-not-allowed"
             }`}
+            onClick={handleDelete}
+            disabled={selectedIds.length === 0 || isDeleting}
           >
-            <RiDeleteBinLine className="mr-1.5 text-base" />
-            Delete
-          </button>
-          <button className="flex items-center py-2 px-3 rounded-md text-sm cursor-pointer border border-gray-300 bg-white hover:bg-gray-50">
-            <FaFilter className="mr-1.5 text-base" />
-            Filters
+            {isDeleting ? (
+              <FiLoader className="animate-spin" size={14} />
+            ) : (
+              <RiDeleteBinLine size={14} />
+            )}
+            <span className="hidden xs:inline">Delete</span>
           </button>
           <button
-            onClick={handleExport}
-            className="flex items-center py-2 px-3 rounded-md text-sm cursor-pointer border border-gray-300 bg-white hover:bg-gray-50"
+            className="flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-2 bg-gray-100 rounded hover:bg-gray-200 transition text-sm sm:text-base"
+            onClick={() => alert("Filter button clicked!")}
           >
-            <FaFileExport className="mr-1.5 text-base" />
-            Export
+            <FaFilter size={14} />
+            <span className="hidden xs:inline">Filters</span>
+          </button>
+          <button
+            className="flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-2 bg-gray-100 rounded hover:bg-gray-200 transition text-sm sm:text-base"
+            onClick={handleExport}
+          >
+            <FaFileExport size={14} />
+            <span className="hidden xs:inline">Export</span>
           </button>
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-md shadow-sm">
-        <table className="w-full border-collapse border-spacing-0">
+      {/* Table Section */}
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse">
           <thead>
-            <tr>
-              <th className="bg-gray-50 text-blue-500 text-left py-4 px-5 font-bold border-b border-gray-200">
-                <input
-                  type="checkbox"
-                  className="w-4.5 h-4.5 cursor-pointer"
-                  onChange={() => {
-                    if (selectedIds.length === paginatedData.length) {
-                      setSelectedIds([]);
-                    } else {
-                      setSelectedIds(paginatedData.map((item) => item.id));
-                    }
-                  }}
-                  checked={
-                    paginatedData.length > 0 &&
-                    selectedIds.length === paginatedData.length
-                  }
-                />
+            <tr className="text-left border-b">
+              <th className="p-2 sm:p-3"></th>
+              <th className="p-2 sm:p-3 text-blue-600 font-semibold text-sm sm:text-base">
+                STUDENT NAME
               </th>
-              <th className="bg-gray-50 text-blue-500 text-left py-4 px-5 font-bold border-b border-gray-200">
-                Student Name
+              <th className="p-2 sm:p-3 text-blue-600 font-semibold text-sm sm:text-base hidden sm:table-cell">
+                CODE
               </th>
-              <th className="bg-gray-50 text-blue-500 text-left py-4 px-5 font-bold border-b border-gray-200">
-                Code
+              <th className="p-2 sm:p-3 text-blue-600 font-semibold text-sm sm:text-base hidden sm:table-cell">
+                CLASS
               </th>
-              <th className="bg-gray-50 text-blue-500 text-left py-4 px-5 font-bold border-b border-gray-200">
-                Class
+              <th className="p-2 sm:p-3 text-blue-600 font-semibold text-sm sm:text-base hidden sm:table-cell">
+                SCREENING RESULT
               </th>
-              <th className="bg-gray-50 text-blue-500 text-left py-4 px-5 font-bold border-b border-gray-200">
-                Screening Result
+              <th className="p-2 sm:p-3 text-blue-600 font-semibold text-sm sm:text-base hidden sm:table-cell">
+                CONSULTANT
               </th>
-              <th className="bg-gray-50 text-blue-500 text-left py-4 px-5 font-bold border-b border-gray-200">
-                Consultant
-              </th>
-              <th className="bg-gray-50 text-blue-500 text-left py-4 px-5 font-bold border-b border-gray-200">
-                Consultation Result
-              </th>
-              <th className="bg-gray-50 text-blue-500 text-left py-4 px-5 font-bold border-b border-gray-200">
-                Action
+              <th className="p-2 sm:p-3 text-blue-600 font-semibold text-sm sm:text-base">
+                ACTION
               </th>
             </tr>
           </thead>
           <tbody>
             {paginatedData.map((item) => (
-              <tr key={item.id}>
-                <td className="py-4 px-5 border-b border-gray-200">
+              <tr key={item.id} className="border-b hover:bg-gray-50">
+                <td className="p-2 sm:p-3">
                   <input
                     type="checkbox"
-                    className="w-4.5 h-4.5 cursor-pointer"
-                    onChange={() => handleSelect(item.id)}
                     checked={selectedIds.includes(item.id)}
+                    onChange={() => handleSelect(item.id)}
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
                 </td>
-                <td className="py-4 px-5 border-b border-gray-200">
-                  <div className="flex gap-2.5 items-center">
+
+                <td className="p-2 sm:p-3">
+                  <div className="flex items-center gap-2">
                     <img
                       src={item.avater}
-                      alt={item.studentName}
-                      className="w-10 h-10 rounded"
+                      alt=""
+                      className="w-8 h-8 sm:w-10 sm:h-10 rounded"
                     />
-                    <span>{item.studentName}</span>
+                    <span className="font-medium text-sm sm:text-base">
+                      {item.studentName}
+                    </span>
                   </div>
                 </td>
-                <td className="py-4 px-5 border-b border-gray-200 text-blue-500">
+
+                <td className="p-2 sm:p-3 text-blue-500 text-sm hidden sm:table-cell">
                   {item.code}
                 </td>
-                <td className="py-4 px-5 border-b border-gray-200">
+                <td className="p-2 sm:p-3 text-sm hidden sm:table-cell">
                   {item.class}
                 </td>
-                <td className="py-4 px-5 border-b border-gray-200">
-                  <a href="#" className="text-blue-500 hover:underline">
+                <td className="p-2 sm:p-3 hidden sm:table-cell">
+                  <a href="#" className="text-blue-500 hover:underline text-sm">
                     {item.screeningResult}
                   </a>
                 </td>
-                <td className="py-4 px-5 border-b border-gray-200">
+                <td className="p-2 sm:p-3 text-sm hidden sm:table-cell">
                   {item.consultant}
                 </td>
-                <td className="py-4 px-5 border-b border-gray-200">
-                  <a href="#" className="text-blue-500 hover:underline">
-                    {item.consResult}
-                  </a>
-                </td>
-                <td className="py-4 px-5 border-b border-gray-200">
-                  <div className="flex gap-1.5 justify-center">
-                    <button className="flex items-center justify-center w-8 h-8 rounded-md border border-blue-500 bg-white text-blue-500 hover:bg-blue-50">
-                      <GrEdit />
+
+                <td className="w-[100px] sm:w-[120px]">
+                  <div className="flex gap-1 justify-center">
+                    <button
+                      className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded border border-blue-500 text-blue-500 hover:bg-blue-50 transition-colors"
+                      onClick={() => handleEditClick(item)}
+                      disabled={isEditing}
+                    >
+                      {isEditing && item.id === selectedItem?.id ? (
+                        <FiLoader className="animate-spin" size={12} />
+                      ) : (
+                        <GrEdit size={12} />
+                      )}
                     </button>
-                    <button className="flex items-center justify-center w-8 h-8 rounded-md border border-blue-500 bg-white text-blue-500 hover:bg-blue-50">
-                      <FaRegEye />
+                    <button className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded border border-blue-500 text-blue-500 hover:bg-blue-50 transition-colors">
+                      <FaRegEye size={12} />
                     </button>
-                    <button className="flex items-center justify-center w-8 h-8 rounded-md border border-red-500 bg-white text-red-500 hover:bg-red-50">
-                      <RiDeleteBinLine />
+                    <button
+                      className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded border border-red-500 text-red-500 hover:bg-red-50 transition-colors"
+                      onClick={() => {
+                        setData(data.filter((d) => d.id !== item.id));
+                        setSelectedIds(
+                          selectedIds.filter((id) => id !== item.id)
+                        );
+                      }}
+                    >
+                      <RiDeleteBinLine size={12} />
                     </button>
                   </div>
                 </td>
@@ -419,9 +498,122 @@ function FollowUpList() {
         </table>
       </div>
 
-      <div className="flex justify-end items-center mt-5 gap-1.5">
+      {/* Pagination */}
+      <div className="flex justify-center sm:justify-end items-center mt-4 sm:mt-5 gap-1">
         {generatePagination()}
       </div>
+
+      {/* Edit Modal */}
+      {isEditing && selectedItem && (
+        <div className="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-md w-full">
+            <h3 className="text-lg font-medium mb-4">Edit Student</h3>
+            <form onSubmit={handleSaveEdit}>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Student Name
+                  </label>
+                  <input
+                    type="text"
+                    name="studentName"
+                    value={editFormData.studentName}
+                    onChange={handleEditFormChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Code
+                  </label>
+                  <input
+                    type="text"
+                    name="code"
+                    value={editFormData.code}
+                    onChange={handleEditFormChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Class
+                  </label>
+                  <input
+                    type="text"
+                    name="class"
+                    value={editFormData.class}
+                    onChange={handleEditFormChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Screening Result
+                  </label>
+                  <input
+                    type="text"
+                    name="screeningResult"
+                    value={editFormData.screeningResult}
+                    onChange={handleEditFormChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Consultant
+                  </label>
+                  <input
+                    type="text"
+                    name="consultant"
+                    value={editFormData.consultant}
+                    onChange={handleEditFormChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Consultant Result
+                  </label>
+                  <input
+                    type="text"
+                    name="consResult"
+                    value={editFormData.consResult}
+                    onChange={handleEditFormChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div className="flex justify-end gap-3 mt-6">
+                  <button
+                    type="button"
+                    className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                    onClick={() => {
+                      setIsEditing(false);
+                      setSelectedItem(null);
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  >
+                    Save Changes
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -21,9 +21,9 @@ export default function CreaeteMessage() {
   };
 
   return (
-    <div className="bg-white rounded-lg border-2 border-blue-100/20 p-5 shadow-sm">
+    <div className=" p-5 shadow-sm">
       {/* Header */}
-      <div className="flex mb-6 bg-white shadow-md rounded-2xl border-2 border-blue-100/20 p-4 gap-2.5">
+      <div className="flex mb-6 bg-white shadow-md rounded-2xl border-2 border-[#1E74FF26]  p-4 gap-2.5">
         <button
           className={`flex-1 p-3 rounded-lg border-none cursor-pointer text-base transition-colors ${
             activePage === "messageView"
@@ -48,17 +48,17 @@ export default function CreaeteMessage() {
 
       {/* Content */}
       {activePage === "createmessage" && (
-        <div className="bg-white p-6 rounded-lg">
+        <div className="bg-white p-6 rounded-lg border-2 border-[#1E74FF26] shadow-sm">
           <h2 className="text-2xl font-semibold text-gray-800 mb-6">
             Send New Message
           </h2>
 
-          <div className="mb-5">
+          <div className="mb-5 p-2">
             <label className="block text-gray-700 font-medium mb-2">
               Select School
             </label>
             <select
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 h-[60px] py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={selectManager}
               onChange={(e) => setSelectManager(e.target.value)}
             >
