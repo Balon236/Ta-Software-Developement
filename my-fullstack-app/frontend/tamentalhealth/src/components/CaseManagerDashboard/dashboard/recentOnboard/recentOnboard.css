@@ -1,0 +1,56 @@
+.onboard-container {
+    background-color: #f2f2f2;
+    border-radius: 20px;
+    padding: 25px;
+    max-width: 900px;
+    margin: 40px auto;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
+}
+
+.onboard-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.onboard-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.onboard-header,
+.onboard-row {
+    display: flex;
+    align-items: center;
+    text-align: left;
+}
+
+.onboard-header {
+    background-color: #3a7edc;
+    color: white;
+    font-size: 20px;
+    font-weight: 500;
+    border-radius: 6px 6px 0 0;
+}
+
+.onboard-row {
+    background-color: white;
+    border-top: 2px solid #3a7edc;
+}
+
+.onboard-col {
+    padding: 15px;
+    flex: 1;
+    font-size: 16px;
+}
+
+.onboard-col.view a {
+    color: #3366cc;
+    text-decoration: none;
+}
+
+.onboard-col.view a:hover {
+    text-decoration: underline;
+}
