@@ -427,6 +427,16 @@ const OnboardingPage2 = () => {
     alert("Checklist submitted!");
   };
 
+  // const handleSubmit = () => {
+  //   const page1Data = JSON.parse(localStorage.getItem("page1"));
+  //   console.log("page 1 data", page1Data);
+  //   console.log("Form submitted:", formData);
+
+  //   const finalData = { ...page1Data, ...formData };
+
+  //   console.log("final Data:", finalData);
+  //   alert("Checklist submitted!");
+  // };
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentSections = sections.slice(startIndex, startIndex + itemsPerPage);
 

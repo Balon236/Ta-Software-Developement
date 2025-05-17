@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { FaFileExport, FaFilter, FaRegEye, FaSearch } from "react-icons/fa";
 import { GrEdit, GrLinkNext, GrLinkPrevious } from "react-icons/gr";
 import { FiLoader } from "react-icons/fi";
+import axios from "axios";
 
 const ClassView = () => {
   const [entries, setEntries] = useState(7);
@@ -10,6 +11,117 @@ const ClassView = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showEditModal, setShowEditModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [data, setData] = useState([]);
+  const [selectedIds, setSelectedIds] = useState([]);
+
+  // Fetch classrooms on component mount
+  useEffect(() => {
+    fetchClassrooms();
+  }, []);
+
+  // Fetch classrooms with search
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (searchQuery) {
+        searchClassrooms();
+      } else {
+        fetchClassrooms();
+      }
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery]);
+
+  const fetchClassrooms = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get("/api/classrooms/view");
+      if (response.data.status) {
+        setData(
+          response.data.data.map((item) => ({
+            id: item.class_id,
+            country: item.country_name,
+            schoolName: item.school_name,
+            class: item.class_name,
+            manager: item.manager_name,
+          }))
+        );
+      }
+    } catch (error) {
+      setError("Failed to fetch classrooms");
+      console.error("Error fetching classrooms:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const searchClassrooms = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get(
+        `/api/classrooms/search?query=${searchQuery}`
+      );
+      if (response.data.status) {
+        setData(
+          response.data.data.map((item) => ({
+            id: item.class_id,
+            country: item.country_name,
+            schoolName: item.school_name,
+            class: item.class_name,
+            manager: item.manager_name,
+          }))
+        );
+      }
+    } catch (error) {
+      setError("Failed to search classrooms");
+      console.error("Error searching classrooms:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!selectedIds.length) return;
+
+    setIsLoading(true);
+    try {
+      const deletePromises = selectedIds.map((id) =>
+        axios.post("/api/classrooms/delete", { classroom_id: id })
+      );
+
+      await Promise.all(deletePromises);
+      await fetchClassrooms(); // Refresh the list
+      setSelectedIds([]);
+    } catch (error) {
+      setError("Failed to delete classrooms");
+      console.error("Error deleting classrooms:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleRemoveManager = async (classroomId) => {
+    setIsLoading(true);
+    try {
+      const response = await axios.post("/api/classrooms/remove-manager", {
+        classroom_id: classroomId,
+      });
+
+      if (response.data.status) {
+        await fetchClassrooms(); // Refresh the list
+      } else {
+        setError(response.data.message || "Failed to remove manager");
+      }
+    } catch (error) {
+      setError("Failed to remove manager");
+      console.error("Error removing manager:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const [editFormData, setEditFormData] = useState({
     country: "",
     schoolName: "",
@@ -17,80 +129,6 @@ const ClassView = () => {
     manager: "",
   });
   const [selectedClient, setSelectedClient] = useState(null);
-  const [data, setData] = useState([
-    {
-      id: 1,
-      country: "Cameroon",
-      schoolName: "Bilingual Grammar High School Molyko (BGHS)",
-      class: "Form 5",
-      manager: "Aron Pierre",
-    },
-    {
-      id: 2,
-      country: "Allgeria",
-      schoolName: "Inter Comprehensive High School (ICHS)",
-      class: "Form 5",
-      manager: "Aron Pierre",
-    },
-    {
-      id: 3,
-      country: "Tunisia",
-      schoolName: "Bilingual Grammar High School Molyko (BGHS)",
-      class: "Form 5",
-      manager: "Aron Pierre",
-    },
-    {
-      id: 4,
-      country: "Uganda",
-      schoolName: "Inter Comprehensive High School (ICHS)",
-      class: "Form 5",
-      manager: "Aron Pierre",
-    },
-    {
-      id: 5,
-      country: "Angola",
-      schoolName: "Inter Comprehensive High School (ICHS)",
-      class: "Form 5",
-      manager: "Aron Pierre",
-    },
-    {
-      id: 6,
-      country: "Cape_verde",
-      schoolName: "Bilingual Grammar High School Molyko (BGHS)",
-      class: "Form 5",
-      manager: "Aron Pierre",
-    },
-    {
-      id: 7,
-      country: "Nigeria",
-      schoolName: "Bilingual Grammar High School Molyko (BGHS)",
-      class: "Form 5",
-      manager: "Aron Pierre",
-    },
-    {
-      id: 8,
-      country: "Cameroon",
-      schoolName: "Bilingual Grammar High School Molyko (BGHS)",
-      class: "Form 5",
-      manager: "Aron Pierre",
-    },
-    {
-      id: 9,
-      country: "Cameroon",
-      schoolName: "Bilingual Grammar High School Molyko (BGHS)",
-      class: "Form 5",
-      manager: "Aron Pierre",
-    },
-    {
-      id: 10,
-      country: "Cameroon",
-      schoolName: "Bilingual Grammar High School Molyko (BGHS)",
-      class: "Form 4",
-      manager: "Dev Nquizi",
-    },
-  ]);
-
-  const [selectedIds, setSelectedIds] = useState([]);
 
   // Handle edit button click
   const handleEditClick = (client) => {
@@ -157,12 +195,6 @@ const ClassView = () => {
     setSelectedIds((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
-  };
-
-  const handleDelete = () => {
-    const newData = data.filter((item) => !selectedIds.includes(item.id));
-    setData(newData);
-    setSelectedIds([]);
   };
 
   const handleExport = () => {
@@ -240,6 +272,12 @@ const ClassView = () => {
   return (
     <div className="bg-white rounded-lg p-5 mx-auto shadow-sm border-2 border-[#1E74FF26]">
       <h1 className="text-2xl text-gray-800 mb-5 font-medium">Class</h1>
+
+      {error && (
+        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">
+          {error}
+        </div>
+      )}
 
       {/* Edit Modal */}
       {showEditModal && (

@@ -1117,6 +1117,13 @@ const OnboardingForm = ({ onSubmit }) => {
     }
   };
 
+  // const handleSubmit = () => {
+  //   console.log("Form submitted:", formData);
+  //   localStorage.setItem("page1", JSON.stringify(formData));
+  //   if (onSubmit) {
+  //     onSubmit();
+  //   }
+  // };
   return (
     <div className="p-0 mx-auto md:p-0 min-h-screen">
       {step === 1 && (

@@ -1,20 +1,51 @@
 import React, { useState } from "react";
 import ClassView from "./classPage";
+import axios from "axios";
 
 export default function ClassManager() {
   const [activePage, setActivePage] = useState("classView");
   const [selectedSchool, setSelectedSchool] = useState("");
   const [className, setClassName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!selectedSchool || !className) {
-      alert("Please fill in all fields");
+      setError("Please fill in all fields");
       return;
     }
-    console.log("Saved Class:", { selectedSchool, className });
-    alert("Class saved successfully!");
-    setSelectedSchool("");
-    setClassName("");
+
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const response = await axios.post("/api/classrooms/create", {
+        school_id: parseInt(selectedSchool),
+        name: className,
+      });
+
+      if (response.data.status) {
+        alert("Class saved successfully!");
+        setSelectedSchool("");
+        setClassName("");
+        // Optionally refresh the class view
+        setActivePage("classView");
+      } else {
+        setError(
+          response.data.errors
+            ? Object.values(response.data.errors).join(", ")
+            : "Failed to create class"
+        );
+      }
+    } catch (error) {
+      setError(
+        error.response?.data?.errors
+          ? Object.values(error.response.data.errors).join(", ")
+          : "An error occurred while creating the class"
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -48,6 +79,12 @@ export default function ClassManager() {
         <div className="bg-white rounded-2xl shadow-md p-8">
           <h2 className="text-2xl font-semibold mb-6">Add New Class</h2>
 
+          {error && (
+            <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">
+              {error}
+            </div>
+          )}
+
           <div className="mb-6">
             <label className="block text-gray-700 mb-2 font-medium">
               Select School
@@ -58,9 +95,7 @@ export default function ClassManager() {
               onChange={(e) => setSelectedSchool(e.target.value)}
             >
               <option value="">-- Select School --</option>
-              <option value="ICHS">
-                Inter Comprehensive High School (ICHS)
-              </option>
+              <option value="3">Inter Comprehensive High School (ICHS)</option>
             </select>
           </div>
 
@@ -78,10 +113,11 @@ export default function ClassManager() {
           </div>
 
           <button
-            className="w-full bg-blue-600 text-white p-5 border-none rounded-lg font-semibold cursor-pointer transition-colors hover:bg-blue-700"
+            className="w-full bg-blue-600 text-white p-5 border-none rounded-lg font-semibold cursor-pointer transition-colors hover:bg-blue-700 disabled:opacity-50"
             onClick={handleSave}
+            disabled={isLoading}
           >
-            Save
+            {isLoading ? "Saving..." : "Save"}
           </button>
         </div>
       )}
