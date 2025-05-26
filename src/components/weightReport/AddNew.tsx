@@ -11,7 +11,7 @@ export default function AddNew(){
                         id="weight" 
                         name="weight"
                         placeholder="Enter New Weight"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md  placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-3 py-2 border  border-brand-500 rounded-md  placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                 </div>
                 <div className="mx-auto mb-4">
@@ -21,7 +21,7 @@ export default function AddNew(){
                         id="date" 
                         name="date"
                         placeholder=""
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md  placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-3 py-2 border  border-brand-500 rounded-md  placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                 </div>
                 <div className="mx-auto mb-4">
@@ -31,7 +31,7 @@ export default function AddNew(){
                         id="name" 
                         name="name"
                         placeholder="Enter your name"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md  placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-3 py-2 border  border-brand-500 rounded-md  placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                 </div>
                <div className="flex justify-center">

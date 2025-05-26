@@ -1,7 +1,8 @@
 
 import SwitchTab from "../../../components/common/SwitchTab";
-import AddSchedule from "../../../components/timetable/addSchedule";
-import ViewTimetable from "../../../components/timetable/viewTimeTable";
+import EnterNew from "../../../components/followup/report/EnterNew";
+import FReport from "../../../components/followup/report/Report";
+
 
 import AppHeader from "../../../layout/AppHeader";
 
@@ -9,8 +10,8 @@ import AppHeader from "../../../layout/AppHeader";
 export default function FollowupReport(){
     return (
         <>
-            <AppHeader title="My TimeTable" subTitle="View and add new schedule"/>
-            <SwitchTab tabOne="My TimeTable" tabTwo="Add New Shedule" tabOneContent={<ViewTimetable/>} tabTwoContent={<AddSchedule/>}/>
+            <AppHeader title="Report on Follow-up" subTitle="View and add new report follow up"/>
+            <SwitchTab tabOne="Report on Follow-up" tabTwo="Enter New Report" tabOneContent={<FReport/>} tabTwoContent={<EnterNew/>}/>
   
         </>
     )

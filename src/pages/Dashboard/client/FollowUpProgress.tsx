@@ -1,7 +1,8 @@
 
 import SwitchTab from "../../../components/common/SwitchTab";
-import AddSchedule from "../../../components/timetable/addSchedule";
-import ViewTimetable from "../../../components/timetable/viewTimeTable";
+import Add from "../../../components/followup/progress/Add";
+import Progress from "../../../components/followup/progress/Progress";
+
 
 import AppHeader from "../../../layout/AppHeader";
 
@@ -9,8 +10,8 @@ import AppHeader from "../../../layout/AppHeader";
 export default function FollowupProgress(){
     return (
         <>
-            <AppHeader title="My TimeTable" subTitle="View and add new schedule"/>
-            <SwitchTab tabOne="My TimeTable" tabTwo="Add New Shedule" tabOneContent={<ViewTimetable/>} tabTwoContent={<AddSchedule/>}/>
+            <AppHeader title="Follow Up Progress" subTitle="View and add follow up progress"/>
+            <SwitchTab tabOne="Follow Up Progress" tabTwo="Add a Progress on a Student" tabOneContent={<Progress/>} tabTwoContent={<Add/>}/>
   
         </>
     )

@@ -1,3 +1,5 @@
+import WeightHeightChart from "../charts/WeightHeight";
+
 export default function WeightStats(){
     return (
           <div className="max-w-4xl mx-auto">
@@ -9,7 +11,7 @@ export default function WeightStats(){
 
        
             <div className="relative bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6" style={{height:"400px"}}>
-                <canvas id="weightChart" className="w-full h-full"></canvas>
+               <WeightHeightChart/>
             </div>
 
          

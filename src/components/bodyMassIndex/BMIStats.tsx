@@ -1,3 +1,5 @@
+import HeightLineChart from "../charts/LineChart"
+
 export default function BMIStats(){
     return (
         <div className="max-w-4xl mx-auto">
@@ -17,19 +19,7 @@ export default function BMIStats(){
 
            
             <div className="relative bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6" style={{height: "400px"}}>
-                <canvas id="bmiChart" className="w-full h-full"></canvas>
-                
-                
-                <div className="absolute top-20 right-16 bg-white p-2 border border-gray-300 rounded shadow-sm">
-                    <div className="text-blue-600 font-semibold text-sm">Malnutrition</div>
-                    <div className="text-xs text-gray-600">( the student doesn't eat much or</div>
-                    <div className="text-xs text-gray-600">he eats an unbalanced diet )</div>
-                </div>
-            </div>
-
-           
-            <div className="text-center text-gray-600 mb-6">
-                22 May 2025
+                <HeightLineChart selectedDate="24-02-06"/> 
             </div>
 
           
