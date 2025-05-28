@@ -1,0 +1,56 @@
+.weight-chart-container {
+    width: 100%;
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.weight-chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.weight-chart-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+}
+
+.year-select {
+    padding: 8px 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    background-color: white;
+    font-size: 14px;
+    color: #666;
+    cursor: pointer;
+    outline: none;
+}
+
+.year-select:hover {
+    border-color: #1e74ff;
+}
+
+.year-select:focus {
+    border-color: #1e74ff;
+    box-shadow: 0 0 0 2px rgba(30, 116, 255, 0.2);
+}
+
+@media (max-width: 576px) {
+    .weight-chart-container {
+        padding: 15px;
+    }
+
+    .weight-chart-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .weight-chart-header h2 {
+        font-size: 16px;
+    }
+}
