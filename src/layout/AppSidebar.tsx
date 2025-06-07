@@ -33,72 +33,22 @@ const navItems: NavItem[] = [
   {
     icon: <GridIcon />,
     name: "Profile",
-    path: "/client/profile",
-  },
-  {
-    icon: <UserCircleIcon />,
-    name: "Case Managers Details",
-    path: "/client/caseManagers",
-  },
-  {
-    icon: <CalendarIcon />,
-    name: "Scheduling Results",
-    path: "/client/schedulingResults",
+    path: "/consultant/profile",
   },
   {
     icon: <UsersIcon />,
-    name: "Report on Trauma Screen",
-    path: "/client/traumaReports",
+    name: "Student Referred",
+    path: "/consultant/studentsRefered",
+  },
+  {
+    icon: <UserCircleIcon />,
+    name: "Consult a student",
+    path: "/consultant/consult",
   },
   {
     icon: <ClipboardListIcon />,
-    name: "Consultation Reports",
-    path: "/client/consultationReports",
-  },
-  {
-    icon: <SchoolIcon />,
-    name: "Time Table",
-    path: "/client/timetable",
-  },
-  {
-    icon: <GridIcon />,
-    name: "Attendance",
-    path: "/client/attendance",
-  },
-  {
-    icon: <PlusCircleIcon />,
-    name: "Follow-up Plan",
-    path: "/client/followupPlan",
-  },
-  {
-    icon: <TimerIcon />,
-    name: "Follow-up Progress",
-    path: "/client/followupProgress",
-  },
-  {
-    icon: <PersonStandingIcon />,
-    name: "Report on Follow-up",
-    path: "/client/followupReport",
-  },
-  {
-    icon: <BarChartIcon />,
-    name: "Weight Statistics",
-    path: "/client/weightStats",
-  },
-  {
-    icon: <HeartPulseIcon />,
-    name: "Body Mass Index",
-    path: "/client/bmi",
-  },
-  {
-    icon: <FileTextIcon />,
-    name: "General Report",
-    path: "/client/generalReport",
-  },
-  {
-    icon: <BookOpenIcon />,
-    name: "Medical Booklets",
-    path: "/client/medicalBooklets",
+    name: "All students consulted",
+    path: "/consultant/studentsConsulted",
   },
   {
     icon: <LogOutIcon />,
@@ -106,13 +56,6 @@ const navItems: NavItem[] = [
     path: "/logout",
   },
 ];
-
-
-
-
-
-
-
 
 
 const AppSidebar: React.FC = () => {
